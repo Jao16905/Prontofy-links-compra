@@ -34,7 +34,7 @@ const FeatureCard = ({ image, title, description, buttonText, link }: FeatureCar
         <p className="text-sm leading-relaxed text-primary-foreground/80 sm:text-base">
           {description}
         </p>
-        <span className="inline-flex w-fit items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors duration-200 group-hover:bg-secondary">
+        <span className="inline-flex w-fit items-center gap-2 rounded-sm bg-primary px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-primary-foreground transition-colors duration-200 group-hover:bg-secondary">
           {buttonText}
           <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
         </span>

@@ -6,9 +6,9 @@ const Footer = () => {
           © Copyright 2026 Prontofy &nbsp;| &nbsp;Todos os direitos reservados
         </p>
         <div className="mt-4 flex items-center justify-center gap-2 text-primary-foreground">
-          <span className="text-xs font-light tracking-[0.25em] uppercase">Reax</span>
+          <span className="text-xl font-bold tracking-wide">REAX</span>
           <span className="text-primary-foreground/40">|</span>
-          <span className="text-xl font-bold tracking-wide">CORPS</span>
+          <span className="text-xs font-light tracking-[0.25em] uppercase">Corps</span>
         </div>
       </div>
     </footer>
