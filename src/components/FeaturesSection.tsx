@@ -31,8 +31,8 @@ const cards = [
   },
   {
     image: cardPatients,
-    title: "Experiência moderna para pacientes",
-    description: "Telemedicina, integração com WhatsApp e gestão completa do atendimento.",
+    title: "Telemedicina com IA",
+    description: "Proteja sua carreira médica protegendo os dados do seu paciente, telemedicina com criptografia dos dados.",
     buttonText: "Saiba Mais",
     link: "#pacientes",
     accent: "from-teal-900/90 via-teal-900/60",
