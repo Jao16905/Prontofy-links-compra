@@ -27,7 +27,7 @@ const FeatureCard = ({ image, title, description, buttonText, link }: FeatureCar
       </div>
 
       {/* Content */}
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-6">
+      <div className="absolute inset-y-0 left-0 flex w-3/5 flex-col justify-center gap-3 p-6 sm:p-8 lg:w-1/2">
         <h3 className="text-xl font-bold leading-tight text-primary-foreground sm:text-2xl">
           {title}
         </h3>
