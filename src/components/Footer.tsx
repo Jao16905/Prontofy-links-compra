@@ -1,14 +1,14 @@
 const Footer = () => {
   return (
-    <footer className="w-full py-8" style={{ background: 'linear-gradient(180deg, hsl(214,100%,15%) 0%, hsl(220,20%,7%) 100%)' }}>
+    <footer className="w-full py-10">
       <div className="mx-auto max-w-7xl px-4 text-center">
-        <p className="text-sm text-primary-foreground/80">
+        <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
           © Copyright 2026 Prontofy &nbsp;| &nbsp;Todos os direitos reservados
         </p>
-        <div className="mt-4 flex items-center justify-center gap-2 text-primary-foreground">
-          <span className="text-xl font-bold tracking-wide">REAX</span>
-          <span className="text-primary-foreground/40">|</span>
-          <span className="text-xs font-light tracking-[0.25em] uppercase">Corps</span>
+        <div className="mt-4 flex items-center justify-center gap-2">
+          <span className="text-xl font-bold tracking-wide" style={{ color: "white" }}>REAX</span>
+          <span style={{ color: "rgba(255,255,255,0.25)" }}>|</span>
+          <span className="text-xs font-light tracking-[0.25em] uppercase" style={{ color: "rgba(255,255,255,0.6)" }}>Corps</span>
         </div>
       </div>
     </footer>
