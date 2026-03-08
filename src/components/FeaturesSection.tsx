@@ -7,16 +7,16 @@ import cardPatients from "@/assets/card-patients.jpg";
 const cards = [
   {
     image: cardClinic,
-    title: "Gestão inteligente para clínicas",
-    description: "Automatize consultas, prontuários e relatórios com inteligência artificial.",
+    title: "Prontuário Eletrônico com IA",
+    description: "Você atende e a IA escreve, treinada para acertar.",
     buttonText: "Explorar Plataforma",
     link: "#plataforma",
     accent: "from-emerald-900/90 via-emerald-900/60",
   },
   {
     image: cardAi,
-    title: "IA que auxilia o médico",
-    description: "Use inteligência artificial para gerar relatórios, diagnósticos auxiliares e insights clínicos.",
+    title: "Agendamento com IA pelo WhatsApp",
+    description: "Tenha uma secretária de IA que entende seu consultório e traga uma experiência humanizada e profissional automática.",
     buttonText: "Conhecer a IA",
     link: "#ia",
     accent: "from-blue-900/90 via-blue-900/60",
@@ -31,8 +31,8 @@ const cards = [
   },
   {
     image: cardPatients,
-    title: "Experiência moderna para pacientes",
-    description: "Telemedicina, integração com WhatsApp e gestão completa do atendimento.",
+    title: "Telemedicina com IA",
+    description: "Proteja sua carreira médica protegendo os dados do seu paciente, telemedicina com criptografia dos dados.",
     buttonText: "Saiba Mais",
     link: "#pacientes",
     accent: "from-teal-900/90 via-teal-900/60",
