@@ -11,6 +11,7 @@ const cards = [
     description: "Automatize consultas, prontuários e relatórios com inteligência artificial.",
     buttonText: "Explorar Plataforma",
     link: "#plataforma",
+    accent: "from-emerald-900/90 via-emerald-900/60",
   },
   {
     image: cardAi,
@@ -18,6 +19,7 @@ const cards = [
     description: "Use inteligência artificial para gerar relatórios, diagnósticos auxiliares e insights clínicos.",
     buttonText: "Conhecer a IA",
     link: "#ia",
+    accent: "from-blue-900/90 via-blue-900/60",
   },
   {
     image: cardDashboard,
@@ -25,6 +27,7 @@ const cards = [
     description: "Dashboards avançados para acompanhar desempenho da clínica em tempo real.",
     buttonText: "Ver Recursos",
     link: "#recursos",
+    accent: "from-slate-900/90 via-slate-900/60",
   },
   {
     image: cardPatients,
@@ -32,12 +35,13 @@ const cards = [
     description: "Telemedicina, integração com WhatsApp e gestão completa do atendimento.",
     buttonText: "Saiba Mais",
     link: "#pacientes",
+    accent: "from-teal-900/90 via-teal-900/60",
   },
 ];
 
 const FeaturesSection = () => {
   return (
-    <section className="relative w-full overflow-hidden py-16 sm:py-24 lg:py-28" style={{ background: 'linear-gradient(135deg, hsl(220,20%,7%) 0%, hsl(220,20%,7%) 40%, hsl(152,76%,20%) 70%, hsl(214,100%,25%) 100%)' }}>
+    <section className="relative w-full py-16 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
