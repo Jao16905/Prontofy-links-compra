@@ -23,7 +23,7 @@ const FeatureCard = ({ image, title, description, buttonText, link }: FeatureCar
           loading="lazy"
         />
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/50 to-transparent" />
       </div>
 
       {/* Content */}
