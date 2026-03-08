@@ -15,7 +15,7 @@ const FeatureCard = ({ image, title, description, buttonText, link }: FeatureCar
       className="group relative block overflow-hidden rounded-lg shadow-card transition-all duration-300 hover:shadow-card-hover hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       {/* Image */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
+      <div className="relative aspect-[16/9] w-full overflow-hidden sm:aspect-[16/8] lg:aspect-[16/9] lg:min-h-[280px]">
         <img
           src={image}
           alt={title}
@@ -23,11 +23,11 @@ const FeatureCard = ({ image, title, description, buttonText, link }: FeatureCar
           loading="lazy"
         />
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/50 to-transparent" />
       </div>
 
       {/* Content */}
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-6">
+      <div className="absolute inset-y-0 left-0 flex w-3/5 flex-col justify-center gap-3 p-6 sm:p-8 lg:w-1/2">
         <h3 className="text-xl font-bold leading-tight text-primary-foreground sm:text-2xl">
           {title}
         </h3>

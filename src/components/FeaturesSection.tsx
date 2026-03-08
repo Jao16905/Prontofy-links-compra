@@ -37,7 +37,7 @@ const cards = [
 
 const FeaturesSection = () => {
   return (
-    <section className="w-full bg-background py-16 sm:py-24">
+    <section className="w-full bg-background py-16 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
