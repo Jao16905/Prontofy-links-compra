@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="w-full bg-muted-foreground/80 py-8">
+    <footer className="w-full py-8" style={{ background: 'linear-gradient(180deg, hsl(214,100%,15%) 0%, hsl(220,20%,7%) 100%)' }}>
       <div className="mx-auto max-w-7xl px-4 text-center">
         <p className="text-sm text-primary-foreground/80">
           © Copyright 2026 Prontofy &nbsp;| &nbsp;Todos os direitos reservados
