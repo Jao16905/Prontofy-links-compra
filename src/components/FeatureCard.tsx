@@ -15,7 +15,7 @@ const FeatureCard = ({ image, title, description, buttonText, link }: FeatureCar
       className="group relative block overflow-hidden rounded-lg shadow-card transition-all duration-300 hover:shadow-card-hover hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       {/* Image */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
+      <div className="relative aspect-[16/9] w-full overflow-hidden sm:aspect-[16/8] lg:aspect-[16/9] lg:min-h-[280px]">
         <img
           src={image}
           alt={title}
