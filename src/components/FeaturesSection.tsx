@@ -15,8 +15,8 @@ const cards = [
   },
   {
     image: cardAi,
-    title: "IA que auxilia o médico",
-    description: "Use inteligência artificial para gerar relatórios, diagnósticos auxiliares e insights clínicos.",
+    title: "Agendamento com IA pelo WhatsApp",
+    description: "Tenha uma secretária de IA que entende seu consultório e traga uma experiência humanizada e profissional automática.",
     buttonText: "Conhecer a IA",
     link: "#ia",
     accent: "from-blue-900/90 via-blue-900/60",
