@@ -7,8 +7,8 @@ import cardPatients from "@/assets/card-patients.jpg";
 const cards = [
   {
     image: cardClinic,
-    title: "Gestão inteligente para clínicas",
-    description: "Automatize consultas, prontuários e relatórios com inteligência artificial.",
+    title: "Prontuário Eletrônico com IA",
+    description: "Você atende e a IA escreve, treinada para acertar.",
     buttonText: "Explorar Plataforma",
     link: "#plataforma",
     accent: "from-emerald-900/90 via-emerald-900/60",
