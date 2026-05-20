@@ -1,6 +1,6 @@
 import FeatureCard from "./FeatureCard";
 import cardClinic from "@/assets/card-clinic.jpg";
-import cardAi from "@/assets/card-ai.jpg";
+import cardAi from "@/assets/agenda-ia.png";
 import cardDashboard from "@/assets/card-dashboard.jpg";
 import cardPatients from "@/assets/card-patients.jpg";
 
