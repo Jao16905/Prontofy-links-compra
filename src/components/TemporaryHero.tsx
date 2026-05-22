@@ -10,16 +10,18 @@ const TemporaryHero = () => {
     <main className="min-h-screen overflow-hidden bg-[#050709] text-white">
       <section className="relative flex min-h-screen items-center">
         <div className="absolute inset-0">
-          <img src={cardClinic} alt="" className="h-full w-full object-cover opacity-28" />
+          <img src={cardClinic} alt="" className="presentation-bg h-full w-full object-cover opacity-28" />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,#050709_0%,rgba(5,7,9,0.92)_38%,rgba(5,7,9,0.64)_100%)]" />
           <div className="absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(180deg,rgba(5,7,9,0)_0%,#050709_100%)]" />
         </div>
 
         <div className="relative mx-auto grid w-full max-w-7xl items-center gap-10 px-5 py-10 sm:px-8 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
           <div className="flex flex-col items-start gap-8">
-            <ProntofyLogo />
+            <div className="lead-enter">
+              <ProntofyLogo />
+            </div>
 
-            <div className="max-w-3xl">
+            <div className="lead-enter lead-enter-delay-1 max-w-3xl">
               <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/7 px-4 py-2 text-sm font-medium text-white/78 backdrop-blur">
                 <CalendarCheck className="h-4 w-4 text-emerald-300" />
                 Apresentação exclusiva para clínicas
@@ -32,7 +34,7 @@ const TemporaryHero = () => {
               </p>
             </div>
 
-            <div className="flex w-full justify-center">
+            <div className="lead-enter lead-enter-delay-2 flex w-full justify-center">
               <a
                 href="#video-apresentacao"
                 className="inline-flex items-center justify-center gap-3 rounded-md bg-[#19c879] px-6 py-4 text-center text-base font-bold uppercase tracking-wide text-[#04110b] shadow-[0_18px_44px_rgba(25,200,121,0.28)] transition hover:bg-[#35df91] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#19c879] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050709]"
@@ -43,7 +45,7 @@ const TemporaryHero = () => {
             </div>
           </div>
 
-          <div className="w-full">
+          <div className="lead-enter lead-enter-delay-2 w-full">
             <div id="video-apresentacao" className="overflow-hidden rounded-lg border border-white/12 bg-black shadow-[0_28px_80px_rgba(0,0,0,0.55)]">
               <div className="relative aspect-video">
                 {PRESENTATION_VIDEO_URL ? (
@@ -58,7 +60,7 @@ const TemporaryHero = () => {
                   <>
                     <img src={cardClinic} alt="Vídeo de apresentação da Prontofy" className="h-full w-full object-cover opacity-75" />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(25,200,121,0.22),rgba(0,0,0,0.65)_58%)]" />
-                    <div className="absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-[#06110d] shadow-[0_14px_42px_rgba(0,0,0,0.38)]">
+                    <div className="presentation-play absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-[#06110d] shadow-[0_14px_42px_rgba(0,0,0,0.38)]">
                       <Play className="ml-1 h-8 w-8 fill-current" />
                     </div>
                   </>
