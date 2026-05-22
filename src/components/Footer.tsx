@@ -6,9 +6,13 @@ const Footer = () => {
           © Copyright 2026 Prontofy &nbsp;| &nbsp;Todos os direitos reservados
         </p>
         <div className="mt-4 flex items-center justify-center gap-2">
-          <span className="text-xl font-bold tracking-wide" style={{ color: "white" }}>REAX</span>
+          <span className="text-xl font-bold tracking-wide" style={{ color: "white" }}>
+            REAX
+          </span>
           <span style={{ color: "rgba(255,255,255,0.25)" }}>|</span>
-          <span className="text-xs font-light tracking-[0.25em] uppercase" style={{ color: "rgba(255,255,255,0.6)" }}>Corps</span>
+          <span className="text-xs font-light uppercase tracking-[0.25em]" style={{ color: "rgba(255,255,255,0.6)" }}>
+            Corps
+          </span>
         </div>
       </div>
     </footer>

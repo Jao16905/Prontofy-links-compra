@@ -3,6 +3,7 @@ import cardClinic from "@/assets/card-clinic.jpg";
 import cardAi from "@/assets/agenda-ia.png";
 import cardDashboard from "@/assets/card-dashboard.jpg";
 import cardPatients from "@/assets/card-patients.jpg";
+import { redirectLinks } from "@/config/links";
 
 const cards = [
   {
@@ -10,7 +11,7 @@ const cards = [
     title: "Prontuário Eletrônico com IA",
     description: "Você atende e a IA escreve, treinada para acertar.",
     buttonText: "Explorar Plataforma",
-    link: "#plataforma",
+    link: redirectLinks.plataforma,
     accent: "from-emerald-900/90 via-emerald-900/60",
   },
   {
@@ -18,7 +19,7 @@ const cards = [
     title: "Agendamento com IA pelo WhatsApp",
     description: "Tenha uma secretária de IA que entende seu consultório e traga uma experiência humanizada e profissional.",
     buttonText: "Conhecer a IA",
-    link: "#ia",
+    link: redirectLinks.iaWhatsapp,
     accent: "from-blue-900/90 via-blue-900/60",
   },
   {
@@ -26,7 +27,7 @@ const cards = [
     title: "Dados que geram decisões",
     description: "Dashboards avançados para acompanhar desempenho da clínica em tempo real.",
     buttonText: "Ver Recursos",
-    link: "#recursos",
+    link: redirectLinks.recursos,
     accent: "from-slate-900/90 via-slate-900/60",
   },
   {
@@ -34,7 +35,7 @@ const cards = [
     title: "Telemedicina com IA",
     description: "Proteja sua carreira médica protegendo os dados do seu paciente, telemedicina com criptografia dos dados.",
     buttonText: "Saiba Mais",
-    link: "#pacientes",
+    link: redirectLinks.telemedicina,
     accent: "from-teal-900/90 via-teal-900/60",
   },
 ];
@@ -54,7 +55,7 @@ const FeaturesSection = () => {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8">
           {cards.map((card) => (
-            <FeatureCard key={card.link} {...card} />
+            <FeatureCard key={card.title} {...card} />
           ))}
         </div>
       </div>
