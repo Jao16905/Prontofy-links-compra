@@ -1,6 +1,6 @@
 export const redirectLinks = {
   plataforma: "/apresentacao",
-  iaWhatsapp: "#",
+  iaWhatsapp: "https://wa.me/message/YO6R73FVJZHTC1",
   recursos: "/apresentacao",
   telemedicina: "#",
 };
