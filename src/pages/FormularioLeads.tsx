@@ -1,4 +1,4 @@
-import { FormEvent, ReactNode, useMemo, useState } from "react";
+import { FormEvent, ReactNode, useMemo, useState, useEffect, useRef, useCallback } from "react";
 import {
   Activity,
   ArrowDown,
@@ -6,6 +6,8 @@ import {
   Bot,
   CalendarCheck,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   CheckCircle2,
   Clock3,
   ClipboardList,
@@ -188,7 +190,7 @@ const FormularioLeads = () => {
 
     try {
       setIsSubmitting(true);
-      const response = await fetch(N8N_WEBHOOK_URL, {
+      const response = await fetch('/webhook/webhook/relacionamento', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -413,35 +415,102 @@ const LeadForm = ({
   </form>
 );
 
-const PainSection = () => (
-  <section id="dor-clinica" className="relative overflow-hidden bg-[#050709] px-5 py-20 sm:px-8 lg:px-10 lg:py-24">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(25,200,121,0.12),transparent_30%),radial-gradient(circle_at_82%_74%,rgba(30,136,229,0.12),transparent_34%)]" />
-    <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-      <div>
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">Consciência operacional</p>
-        <h2 className="mt-4 max-w-2xl text-[clamp(34px,4vw,54px)] font-extrabold leading-[1.04]">
-          A desorganização clínica custa tempo, dinheiro e qualidade de vida.
-        </h2>
-        <p className="mt-6 max-w-2xl text-lg leading-8 text-white/70">
-          Clínicas sem processos organizados enfrentam atrasos, faltas, retrabalho, sobrecarga da equipe e desgaste mental constante.
-        </p>
-      </div>
+const PainSection = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
-      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible sm:pb-0">
-        {painStats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <article key={stat.text} className="min-h-[190px] flex-[0_0_82vw] snap-center rounded-2xl border border-emerald-300/14 bg-white/[0.055] p-6 shadow-[0_0_54px_rgba(28,200,138,0.08)] backdrop-blur sm:flex-auto">
-              <Icon className="h-6 w-6 text-emerald-300" />
-              <p className="mt-6 text-3xl font-extrabold text-white">{stat.value}</p>
-              <p className="mt-3 text-sm leading-6 text-white/66">{stat.text}</p>
-            </article>
-          );
-        })}
+  useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return;
+
+    let intervalId = window.setInterval(() => {
+      if (!scrollRef.current || isHovered) return;
+      
+      const container = scrollRef.current;
+      const child = container.firstElementChild as HTMLElement;
+      if (!child) return;
+      
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      if (container.scrollLeft >= maxScroll - 5) {
+        container.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        container.scrollBy({ left: child.clientWidth + 16, behavior: "smooth" });
+      }
+    }, 4000);
+
+    return () => window.clearInterval(intervalId);
+  }, [isHovered]);
+
+  const scrollBack = () => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const child = container.firstElementChild as HTMLElement;
+    if (child) container.scrollBy({ left: -(child.clientWidth + 16), behavior: "smooth" });
+  };
+
+  const scrollNext = () => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const child = container.firstElementChild as HTMLElement;
+    if (child) container.scrollBy({ left: child.clientWidth + 16, behavior: "smooth" });
+  };
+
+  return (
+    <section id="dor-clinica" className="relative overflow-hidden bg-[#050709] px-5 py-20 sm:px-8 lg:px-10 lg:py-24">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(25,200,121,0.12),transparent_30%),radial-gradient(circle_at_82%_74%,rgba(30,136,229,0.12),transparent_34%)]" />
+      <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">Consciência operacional</p>
+          <h2 className="mt-4 max-w-2xl text-[clamp(34px,4vw,54px)] font-extrabold leading-[1.04]">
+            A desorganização clínica custa tempo, dinheiro e qualidade de vida.
+          </h2>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-white/70">
+            Clínicas sem processos organizados enfrentam atrasos, faltas, retrabalho, sobrecarga da equipe e desgaste mental constante.
+          </p>
+        </div>
+
+        <div className="relative overflow-hidden">
+          <div 
+            ref={scrollRef}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onTouchStart={() => setIsHovered(true)}
+            onTouchEnd={() => setIsHovered(false)}
+            className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          >
+            {painStats.map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <article key={stat.text} className="min-h-[190px] flex-[0_0_82vw] sm:flex-[0_0_45%] lg:flex-[0_0_47%] snap-center rounded-2xl border border-emerald-300/14 bg-white/[0.055] p-6 shadow-[0_0_54px_rgba(28,200,138,0.08)] backdrop-blur">
+                  <Icon className="h-6 w-6 text-emerald-300" />
+                  <p className="mt-6 text-3xl font-extrabold text-white">{stat.value}</p>
+                  <p className="mt-3 text-sm leading-6 text-white/66">{stat.text}</p>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="mt-2 flex items-center justify-end gap-3 lg:justify-start">
+            <button 
+              onClick={scrollBack}
+              aria-label="Card anterior"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white transition hover:bg-white/10 hover:text-emerald-300"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button 
+              onClick={scrollNext}
+              aria-label="Próximo card"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white transition hover:bg-white/10 hover:text-emerald-300"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const LifestyleSection = () => (
   <section className="relative overflow-hidden bg-[#071725] px-5 py-20 sm:px-8 lg:px-10 lg:py-24">

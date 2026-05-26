@@ -64,7 +64,7 @@ const AuthoritySection = () => {
 const AuthorityTimeline = () => {
   return (
     <div className="authority-scroll relative lg:overflow-visible">
-      <svg className="authority-lines pointer-events-none absolute inset-0 hidden h-full w-full lg:block" viewBox="0 0 720 420" fill="none" aria-hidden="true">
+      <svg className="authority-lines pointer-events-none absolute inset-0 z-20 hidden h-full w-full lg:block" viewBox="0 0 720 420" fill="none" aria-hidden="true">
         <defs>
           <marker id="authorityArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
             <path d="M0 0L8 4L0 8Z" fill="hsl(var(--accent))" />
