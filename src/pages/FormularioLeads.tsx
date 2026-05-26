@@ -121,6 +121,8 @@ type FormState = {
   numero: string;
   estado: string;
   maior_dor: string;
+  outro_txt: string;
+  ofertas_ex: boolean;
   website: string;
 };
 
@@ -132,6 +134,8 @@ const initialFormState: FormState = {
   numero: "",
   estado: "",
   maior_dor: "",
+  outro_txt: "",
+  ofertas_ex: false,
   website: "",
 };
 
@@ -146,6 +150,9 @@ const FormularioLeads = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isSuccess = status === "success";
+  const maiorDorIndex = DORES.indexOf(formData.maior_dor);
+  const maiorDorValue = maiorDorIndex >= 0 ? maiorDorIndex + 1 : null;
+  const outroText = formData.maior_dor === "Outra" ? sanitizeText(formData.outro_txt, 240) : null;
 
   const payload = useMemo(
     () => ({
@@ -153,10 +160,12 @@ const FormularioLeads = () => {
       email: sanitizeText(formData.email, 160).toLowerCase(),
       numero: sanitizeText(formData.numero, 32),
       estado: sanitizeText(formData.estado, 40),
-      maior_dor: sanitizeText(formData.maior_dor, 120),
+      maior_dor: maiorDorValue,
+      outro_txt: outroText,
+      ofertas_ex: formData.ofertas_ex,
       data_envio: new Date().toISOString(),
     }),
-    [formData],
+    [formData, maiorDorValue, outroText],
   );
 
   const validate = () => {
@@ -170,7 +179,8 @@ const FormularioLeads = () => {
     }
     if (!payload.numero) nextErrors.numero = "Informe seu telefone ou WhatsApp.";
     if (!payload.estado || !ESTADOS.includes(payload.estado)) nextErrors.estado = "Selecione seu estado.";
-    if (!payload.maior_dor || !DORES.includes(payload.maior_dor)) nextErrors.maior_dor = "Selecione sua maior dor.";
+    if (!payload.maior_dor) nextErrors.maior_dor = "Selecione sua maior dor.";
+    if (formData.maior_dor === "Outra" && !outroText) nextErrors.outro_txt = "Descreva o motivo.";
 
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -212,7 +222,7 @@ const FormularioLeads = () => {
     }
   };
 
-  const updateField = (field: keyof FormState, value: string) => {
+  const updateField = <K extends keyof FormState>(field: K, value: FormState[K]) => {
     setFormData((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
   };
@@ -380,9 +390,40 @@ const LeadForm = ({
           options={DORES}
           error={errors.maior_dor}
           openUp
-          onChange={(value) => updateField("maior_dor", value)}
+          onChange={(value) => {
+            updateField("maior_dor", value);
+            if (value !== "Outra") updateField("outro_txt", "");
+          }}
         />
       </Field>
+
+      {formData.maior_dor === "Outra" && (
+        <Field label="Qual o motivo?" error={errors.outro_txt}>
+          <input
+            id="outro_txt"
+            name="outro_txt"
+            type="text"
+            required
+            maxLength={240}
+            value={formData.outro_txt}
+            onChange={(event) => updateField("outro_txt", event.target.value)}
+            className={inputClassName(errors.outro_txt)}
+            placeholder="Descreva em poucas palavras"
+          />
+        </Field>
+      )}
+
+      <label className="mt-1 flex items-center gap-3 text-sm font-semibold text-white/82">
+        <input
+          id="ofertas_ex"
+          name="ofertas_ex"
+          type="checkbox"
+          checked={formData.ofertas_ex}
+          onChange={(event) => updateField("ofertas_ex", event.target.checked)}
+          className="h-4 w-4 rounded border border-white/30 bg-transparent text-[#1CC88A] focus:ring-2 focus:ring-[#1CC88A]/60"
+        />
+        Quero receber ofertas e promocoes
+      </label>
     </div>
 
     <button
