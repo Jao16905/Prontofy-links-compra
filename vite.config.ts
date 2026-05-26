@@ -13,13 +13,14 @@ export default defineConfig({
     },
     proxy: {
       "/webhook": {
-        target: "https://teste-n8n-editor.6esqeg.easypanel.host",
+        target: "https://teste-n8n-webhook.6esqeg.easypanel.host/webhook",
         changeOrigin: true,
         secure: false,
+        rewrite: (path) => path.replace(/^\/webhook/, '')
       },
     },
   },
-  
+
   plugins: [react()],
   resolve: {
     alias: {
