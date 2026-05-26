@@ -6,9 +6,17 @@ import path from "path";
 export default defineConfig({
   server: {
     host: "::",
+    allowedHosts: ["localhost", "links.prontofy.com.br", "www.links.prontofy.com.br"],
     port: 8080,
     hmr: {
       overlay: false,
+    },
+    proxy: {
+      "/webhook": {
+        target: "https://teste-n8n-editor.6esqeg.easypanel.host",
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
   plugins: [react()],
