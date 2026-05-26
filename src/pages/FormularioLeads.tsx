@@ -30,8 +30,6 @@ import cardDashboard from "@/assets/card-dashboard.jpg";
 import cardPatients from "@/assets/card-patients.jpg";
 import solucaoDeGestao from "@/assets/solucao-de-gestao.png";
 
-const N8N_WEBHOOK_URL = "https://teste-n8n-webhook.6esqeg.easypanel.host/webhook/relacionamento";
-
 const ESTADOS = [
   "Acre",
   "Alagoas",
