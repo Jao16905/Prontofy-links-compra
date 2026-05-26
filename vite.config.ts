@@ -11,6 +11,11 @@ export default defineConfig({
     hmr: {
       overlay: false,
     },
+    proxy: {
+      "/webhook": {
+        target: "https://teste-n8n-editor.6esqeg.easypanel.host",
+      },
+    },
   },
   plugins: [react()],
   resolve: {
