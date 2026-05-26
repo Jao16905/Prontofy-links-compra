@@ -1,5 +1,9 @@
 import { CalendarCheck, MessageCircle, Play } from "lucide-react";
+import AuthoritySection from "./AuthoritySection";
+import CTASection from "./CTASection";
 import ProntofyLogo from "./ProntofyLogo";
+import ProductSection from "./ProductSection";
+import TransformationSection from "./TransformationSection";
 import cardClinic from "@/assets/card-clinic.jpg";
 import { trackEvent } from "@/utils/track";
 
@@ -101,6 +105,10 @@ const TemporaryHero = () => {
           </div>
         </div>
       </section>
+      <AuthoritySection />
+      <TransformationSection />
+      <ProductSection />
+      <CTASection />
     </main>
   );
 };
