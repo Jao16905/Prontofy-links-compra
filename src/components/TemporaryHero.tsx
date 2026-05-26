@@ -1,6 +1,7 @@
 import { CalendarCheck, MessageCircle, Play } from "lucide-react";
 import ProntofyLogo from "./ProntofyLogo";
 import cardClinic from "@/assets/card-clinic.jpg";
+import { trackEvent } from "@/utils/track";
 
 const WHATSAPP_LINK = "https://wa.me/message/YO6R73FVJZHTC1";
 const PRESENTATION_VIDEO_URL = "";
@@ -37,6 +38,13 @@ const TemporaryHero = () => {
             <div className="lead-enter lead-enter-delay-2 flex w-full justify-center">
               <a
                 href="#video-apresentacao"
+                onClick={() =>
+                  trackEvent("cta_click", {
+                    location: "hero",
+                    button_text: "Quero evoluir minha gestão",
+                    action: "scroll_to_video",
+                  })
+                }
                 className="inline-flex items-center justify-center gap-3 rounded-md bg-[#19c879] px-6 py-4 text-center text-base font-bold uppercase tracking-wide text-[#04110b] shadow-[0_18px_44px_rgba(25,200,121,0.28)] transition hover:bg-[#35df91] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#19c879] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050709]"
               >
                 <MessageCircle className="h-5 w-5 shrink-0" />
@@ -78,6 +86,13 @@ const TemporaryHero = () => {
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noreferrer"
+              onClick={() =>
+                trackEvent("cta_click", {
+                  location: "presentation_video",
+                  button_text: "Quero agendar minha apresentação",
+                  action: "open_whatsapp",
+                })
+              }
               className="mt-5 inline-flex w-full items-center justify-center gap-3 rounded-md bg-[#19c879] px-6 py-4 text-center text-base font-bold uppercase tracking-wide text-[#04110b] shadow-[0_18px_44px_rgba(25,200,121,0.28)] transition hover:bg-[#35df91] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#19c879] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050709]"
             >
               <MessageCircle className="h-5 w-5 shrink-0" />

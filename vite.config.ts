@@ -6,6 +6,7 @@ import path from "path";
 export default defineConfig({
   server: {
     host: "::",
+    allowedHosts: ["localhost", "links.prontofy.com.br", "www.links.prontofy.com.br"],
     port: 8080,
     hmr: {
       overlay: false,

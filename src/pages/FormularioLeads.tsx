@@ -2,6 +2,7 @@ import { FormEvent, ReactNode, useMemo, useState } from "react";
 import { ArrowRight, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 import ProntofyLogo from "@/components/ProntofyLogo";
 import formularioBg from "@/assets/formulario-bg.jpg";
+import { trackEvent } from "@/utils/track";
 
 const N8N_WEBHOOK_URL = "https://teste-n8n-editor.6esqeg.easypanel.host/webhook-test/relacionamento";
 
@@ -129,6 +130,11 @@ const FormularioLeads = () => {
       if (!response.ok) {
         throw new Error("Webhook request failed");
       }
+
+      trackEvent("contact_submit", {
+        location: "lead_form",
+        form: "presentation_request",
+      });
 
       setStatus("success");
       setFormData(initialFormState);
