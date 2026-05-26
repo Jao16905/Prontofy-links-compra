@@ -14,6 +14,8 @@ export default defineConfig({
     proxy: {
       "/webhook": {
         target: "https://teste-n8n-editor.6esqeg.easypanel.host",
+        changeOrigin: true,
+        secure: false,
       },
     },
   },
