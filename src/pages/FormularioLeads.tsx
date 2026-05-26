@@ -198,7 +198,7 @@ const FormularioLeads = () => {
 
     try {
       setIsSubmitting(true);
-      const response = await fetch("/webhook/relacionamento", {
+      const response = await fetch(`${import.meta.env.VITE_N8N_WEBHOOK_URL}/webhook/relacionamento`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
