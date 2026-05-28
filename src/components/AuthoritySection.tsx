@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight } from "lucide-react";
-import cardClinic from "@/assets/card-clinic.jpg";
 import cardDashboard from "@/assets/card-dashboard.jpg";
-import cardPatients from "@/assets/card-patients.jpg";
-import cardAi from "@/assets/card-ai.jpg";
 import mapaBrasil from "@/assets/mapa-brasil.jpg";
+import acreImage from "@/assets/acre.png";
+import bahiaImage from "@/assets/bahia.png";
+import balnearioCamboriuImage from "@/assets/balneario-camboriu.png";
+import rioDeJaneiroImage from "@/assets/rio-de-janiero.png";
+import saoPauloImage from "@/assets/sao-paulo.png";
 
 const metrics = [
-  { photo: cardClinic, number: "+18 mil", desc: "Consultas / ano em São Paulo", count: { end: 18, prefix: "+", suffix: " mil" } },
-  { photo: cardDashboard, number: "+6,5 mil", desc: "Atendimentos na Bahia", count: { end: 6.5, prefix: "+", suffix: " mil", decimals: 1 } },
-  { photo: cardPatients, number: "98%", desc: "NPS no Rio de Janeiro", count: { end: 98, suffix: "%" } },
-  { photo: cardAi, number: "↓ 42%", desc: "Menos no-shows em Balneário Camboriú", count: { end: 42, prefix: "↓ ", suffix: "%" } },
-  { photo: cardClinic, number: "+3,2 mil", desc: "Pacientes ativos no Acre", count: { end: 3.2, prefix: "+", suffix: " mil", decimals: 1 } },
+  { photo: saoPauloImage, number: "+18 mil", desc: "Consultas / ano em São Paulo", count: { end: 18, prefix: "+", suffix: " mil" } },
+  { photo: bahiaImage, number: "+6,5 mil", desc: "Atendimentos na Bahia", count: { end: 6.5, prefix: "+", suffix: " mil", decimals: 1 } },
+  { photo: rioDeJaneiroImage, number: "98%", desc: "NPS no Rio de Janeiro", count: { end: 98, suffix: "%" } },
+  { photo: balnearioCamboriuImage, number: "↓ 42%", desc: "Menos no-shows em Balneário Camboriú", count: { end: 42, prefix: "↓ ", suffix: "%" } },
+  { photo: acreImage, number: "+3,2 mil", desc: "Pacientes ativos no Acre", count: { end: 3.2, prefix: "+", suffix: " mil", decimals: 1 } },
   { photo: cardDashboard, number: "24/7", desc: "Gestão acompanhada em tempo real" },
 ];
 

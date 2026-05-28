@@ -1,7 +1,7 @@
 import { ArrowRight, CheckCircle2, Clock3, TrendingUp } from "lucide-react";
-import cardAi from "@/assets/card-ai.jpg";
-import cardDashboard from "@/assets/card-dashboard.jpg";
-import cardPatients from "@/assets/card-patients.jpg";
+import automacoesImage from "@/assets/automacoes.png";
+import antesImage from "@/assets/antes.png";
+import depoisImage from "@/assets/depois.png";
 
 const gains = [
   {
@@ -61,21 +61,21 @@ const TransformationSection = () => {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-lg border border-white/10 bg-[#071016] p-4">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/45">Antes</p>
-                <img src={cardPatients} alt="" className="mt-4 aspect-[4/3] w-full rounded-md object-cover opacity-72" />
+                <img src={antesImage} alt="" className="mt-4 aspect-[4/3] w-full rounded-md object-cover opacity-72" />
                 <p className="mt-4 text-xl font-extrabold text-white">Dados espalhados</p>
                 <p className="mt-2 text-sm leading-6 text-white/58">Decisoes dependem de planilhas, memoria da equipe e retrabalho.</p>
               </div>
 
               <div className="rounded-lg border border-emerald-300/24 bg-emerald-400/[0.08] p-4 shadow-[0_18px_54px_rgba(25,200,121,0.12)]">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">Depois</p>
-                <img src={cardDashboard} alt="" className="mt-4 aspect-[4/3] w-full rounded-md object-cover" />
+                <img src={depoisImage} alt="" className="mt-4 aspect-[4/3] w-full rounded-md object-cover" />
                 <p className="mt-4 text-xl font-extrabold text-white">Gestao visivel</p>
                 <p className="mt-2 text-sm leading-6 text-white/68">Indicadores, rotina e atendimento alinhados para agir com clareza.</p>
               </div>
             </div>
 
             <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-black/28 p-4">
-              <img src={cardAi} alt="" className="h-14 w-14 rounded-md object-cover" />
+              <img src={automacoesImage} alt="" className="h-14 w-14 rounded-md object-cover" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-white">Automacoes e IA trabalhando junto com a equipe</p>
                 <p className="mt-1 text-xs text-white/55">Menos tarefas manuais, mais tempo para cuidar do paciente.</p>

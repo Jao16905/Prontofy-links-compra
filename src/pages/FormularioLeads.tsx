@@ -24,10 +24,12 @@ import {
 } from "lucide-react";
 import ProntofyLogo from "@/components/ProntofyLogo";
 import agendaIa from "@/assets/agenda-ia.png";
+import antesImage from "@/assets/antes.png";
 import cardAi from "@/assets/card-ai.jpg";
-import cardClinic from "@/assets/card-clinic.jpg";
 import cardDashboard from "@/assets/card-dashboard.jpg";
 import cardPatients from "@/assets/card-patients.jpg";
+import depoisImage from "@/assets/depois.png";
+import madrugadaTristeImage from "@/assets/madrugada-triste.png";
 import solucaoDeGestao from "@/assets/solucao-de-gestao.png";
 
 const ESTADOS = [
@@ -521,8 +523,8 @@ const PainSection = () => {
               const Icon = stat.icon;
               return (
                 <article key={stat.text} className="min-h-[190px] flex-[0_0_82vw] sm:flex-[0_0_45%] lg:flex-[0_0_47%] snap-center rounded-2xl border border-emerald-300/14 bg-white/[0.055] p-6 shadow-[0_0_54px_rgba(28,200,138,0.08)] backdrop-blur">
-                  <Icon className="h-6 w-6 text-emerald-300" />
-                  <p className="mt-6 text-3xl font-extrabold text-white">{stat.value}</p>
+                  <Icon className="h-6 w-6 text-[#b8b8b8]" />
+                  <p className="mt-6 text-3xl font-extrabold text-[#1CC88A]">{stat.value}</p>
                   <p className="mt-3 text-sm leading-6 text-white/66">{stat.text}</p>
                 </article>
               );
@@ -557,7 +559,7 @@ const LifestyleSection = () => (
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_72%,rgba(28,200,138,0.14),transparent_30%),radial-gradient(circle_at_78%_20%,rgba(30,136,229,0.14),transparent_34%)]" />
     <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
       <div className="order-1 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055] p-3 shadow-[0_28px_80px_rgba(0,0,0,0.28)] lg:order-none">
-        <img src={cardClinic} alt="Médico usando tecnologia em consultório moderno" className="aspect-[4/3] w-full rounded-xl object-cover" />
+        <img src={madrugadaTristeImage} alt="Médico trabalhando até tarde em um consultório" className="aspect-[4/3] w-full rounded-xl object-cover" />
       </div>
       <div className="order-2">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">Qualidade de vida</p>
@@ -694,8 +696,8 @@ const BeforeAfterSection = () => (
         Do operacional pesado para uma rotina inteligente.
       </h2>
       <div className="mt-12 grid gap-5 lg:grid-cols-2">
-        <CompareCard image={cardPatients} label="Antes" title="Sobrecarga e desorganização" items={["Atrasos e mensagens acumuladas", "Retrabalho administrativo", "Estresse operacional constante"]} />
-        <CompareCard image={cardAi} label="Depois" title="Controle, produtividade e qualidade de vida" items={["Dashboards inteligentes", "Automações e IA na rotina", "Equipe com clareza para executar"]} highlight />
+        <CompareCard image={antesImage} label="Antes" title="Sobrecarga e desorganização" items={["Atrasos e mensagens acumuladas", "Retrabalho administrativo", "Estresse operacional constante"]} />
+        <CompareCard image={depoisImage} label="Depois" title="Controle, produtividade e qualidade de vida" items={["Dashboards inteligentes", "Automações e IA na rotina", "Equipe com clareza para executar"]} highlight />
       </div>
     </div>
   </section>
