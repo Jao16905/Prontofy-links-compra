@@ -524,7 +524,7 @@ const PainSection = () => {
               return (
                 <article key={stat.text} className="min-h-[190px] flex-[0_0_82vw] sm:flex-[0_0_45%] lg:flex-[0_0_47%] snap-center rounded-2xl border border-emerald-300/14 bg-white/[0.055] p-6 shadow-[0_0_54px_rgba(28,200,138,0.08)] backdrop-blur">
                   <Icon className="h-6 w-6 text-[#b8b8b8]" />
-                  <p className="mt-6 text-3xl font-extrabold text-[#1CC88A]">{stat.value}</p>
+                  <p className="mt-6 text-3xl font-extrabold text-[#ff4d4d]">{stat.value}</p>
                   <p className="mt-3 text-sm leading-6 text-white/66">{stat.text}</p>
                 </article>
               );
