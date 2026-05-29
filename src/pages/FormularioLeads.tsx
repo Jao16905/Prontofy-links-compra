@@ -25,9 +25,8 @@ import {
 import ProntofyLogo from "@/components/ProntofyLogo";
 import agendaIa from "@/assets/agenda-ia.png";
 import antesImage from "@/assets/antes.png";
-import cardAi from "@/assets/card-ai.jpg";
+import cardClinic from "@/assets/card-clinic.jpg";
 import cardDashboard from "@/assets/card-dashboard.jpg";
-import cardPatients from "@/assets/card-patients.jpg";
 import depoisImage from "@/assets/depois.png";
 import madrugadaTristeImage from "@/assets/madrugada-triste.png";
 import solucaoDeGestao from "@/assets/solucao-de-gestao.png";
@@ -79,12 +78,17 @@ const painStats = [
 ];
 
 const benefits = [
-  { icon: Wallet, title: "Mais previsibilidade financeira" },
-  { icon: Clock3, title: "Menos tempo perdido com tarefas operacionais" },
-  { icon: CalendarCheck, title: "Agenda organizada automaticamente" },
-  { icon: Users, title: "Mais produtividade para sua equipe" },
-  { icon: Stethoscope, title: "Atendimento mais moderno e eficiente" },
-  { icon: TrendingUp, title: "Redução de faltas e atrasos" },
+  { icon: Wallet, title: "Mais previsibilidade financeira", text: "Entradas, faltas e gargalos visíveis para decidir com clareza." },
+  { icon: Clock3, title: "Menos tarefas operacionais", text: "Rotinas repetitivas deixam de depender de cobrança manual." },
+  { icon: CalendarCheck, title: "Agenda organizada", text: "Confirmações e encaixes ficam mais simples para a equipe." },
+  { icon: Users, title: "Equipe mais produtiva", text: "Cada pessoa entende prioridades, pendências e próximos passos." },
+  { icon: Stethoscope, title: "Atendimento moderno", text: "O paciente percebe mais fluidez antes, durante e depois da consulta." },
+  { icon: TrendingUp, title: "Menos faltas e atrasos", text: "Comunicação e automações reduzem perdas na agenda." },
+];
+
+const lifestyleHighlights = [
+  { value: "Menos pendências", text: "Prontuários, retornos e mensagens passam a ter fluxo claro." },
+  { value: "Mais previsibilidade", text: "A operação deixa de depender de improviso no fim do dia." },
 ];
 
 const floatingCards = [
@@ -94,26 +98,33 @@ const floatingCards = [
   "Agenda sincronizada em tempo real",
 ];
 
+const floatingCardPositions = [
+  { text: "IA organizando prontuários automaticamente", className: "lg:-left-6 lg:top-6 xl:-left-10" },
+  { text: "WhatsApp automatizado", className: "lg:-right-7 lg:top-14 xl:-right-10" },
+  { text: "Controle financeiro inteligente", className: "lg:-left-2 lg:bottom-14 xl:-left-8" },
+  { text: "Agenda sincronizada em tempo real", className: "lg:-right-2 lg:bottom-6 xl:-right-8" },
+];
+
 const steps = [
   {
     icon: ClipboardList,
     title: "Diagnóstico da operação clínica",
-    text: "Entendemos como sua equipe atende, registra, agenda e acompanha pacientes.",
+    text: "Entendemos como sua equipe atende, registra e acompanha pacientes.",
   },
   {
     icon: Sparkles,
     title: "Implementação inteligente",
-    text: "Configuramos fluxos, templates e módulos para a realidade da sua clínica.",
+    text: "Configuramos fluxos, templates e módulos para a sua realidade.",
   },
   {
     icon: Bot,
     title: "Automação da rotina",
-    text: "WhatsApp, agenda, prontuário e gestão passam a trabalhar em conjunto.",
+    text: "WhatsApp, agenda e prontuário passam a operar em conjunto.",
   },
   {
     icon: LineChart,
     title: "Acompanhamento estratégico",
-    text: "Você acompanha indicadores e toma decisões com muito mais clareza.",
+    text: "Indicadores claros para decidir com mais rapidez e segurança.",
   },
 ];
 
@@ -144,6 +155,11 @@ const initialFormState: FormState = {
 const sanitizeText = (value: string, maxLength: number) => value.trim().replace(/\s+/g, " ").slice(0, maxLength);
 
 const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
+
+const scrollToElement = (id: string) => {
+  const element = document.getElementById(id);
+  if (element) element.scrollIntoView({ behavior: "smooth", block: "start" });
+};
 
 const FormularioLeads = () => {
   const [formData, setFormData] = useState<FormState>(initialFormState);
@@ -258,12 +274,16 @@ const FormularioLeads = () => {
               <p className="mt-8 max-w-2xl text-base leading-7 text-white/82 sm:text-lg lg:text-xl lg:leading-8">
                 Entenda como a Prontofy pode organizar sua operação, automatizar rotinas e devolver mais tempo para sua equipe cuidar dos pacientes.
               </p>
-              <a href="#dor-clinica" className="mt-6 inline-flex items-center gap-3 text-sm font-semibold text-white/88 transition hover:text-[#1CC88A] sm:text-base">
+              <button
+                type="button"
+                onClick={() => scrollToElement("dor-clinica")}
+                className="mt-6 inline-flex items-center gap-3 text-sm font-semibold text-white/88 transition hover:text-[#1CC88A] sm:text-base"
+              >
                 <span className="grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-white/8 backdrop-blur">
                   <ArrowDown className="h-5 w-5" />
                 </span>
                 Quero saber mais
-              </a>
+              </button>
             </div>
           </div>
 
@@ -563,14 +583,11 @@ const PainSection = () => {
 };
 
 const LifestyleSection = () => (
-  <section className="relative overflow-hidden bg-[#071725] px-5 py-20 sm:px-8 lg:px-10 lg:py-24">
-    <div className="absolute inset-0 bg-[linear-gradient(135deg,#050709_0%,#0b2339_55%,#071725_100%)]" />
+  <section className="relative overflow-hidden bg-[#071725] px-5 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">
+    <div className="absolute inset-0 bg-[linear-gradient(135deg,#050709_0%,#0b2339_52%,#071725_100%)]" />
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_72%,rgba(28,200,138,0.14),transparent_30%),radial-gradient(circle_at_78%_20%,rgba(30,136,229,0.14),transparent_34%)]" />
-    <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-      <div className="order-1 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055] p-3 shadow-[0_28px_80px_rgba(0,0,0,0.28)] lg:order-none">
-        <img src={madrugadaTristeImage} alt="Médico trabalhando até tarde em um consultório" className="aspect-[4/3] w-full rounded-xl object-cover" />
-      </div>
-      <div className="order-2">
+    <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-14">
+      <div>
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">Qualidade de vida</p>
         <h2 className="mt-4 max-w-2xl text-[clamp(34px,4vw,54px)] font-extrabold leading-[1.04]">
           Sua clínica não precisa acompanhar você até em casa.
@@ -578,32 +595,73 @@ const LifestyleSection = () => (
         <p className="mt-6 max-w-2xl text-lg leading-8 text-white/70">
           Mensagens até tarde, prontuários pendentes e decisões no improviso drenam energia. A Prontofy devolve controle, tranquilidade e organização para uma rotina mais leve.
         </p>
+        <div className="mt-8 grid gap-3 sm:grid-cols-2">
+          {lifestyleHighlights.map((item) => (
+            <article key={item.value} className="rounded-xl border border-white/10 bg-white/[0.055] p-5 backdrop-blur">
+              <h3 className="text-base font-extrabold text-white">{item.value}</h3>
+              <p className="mt-2 text-sm leading-6 text-white/64">{item.text}</p>
+            </article>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => scrollToElement("form-contato")}
+          className="scroll-smooth mt-8 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#1CC88A] px-6 py-3.5 text-sm font-extrabold text-[#04110b] shadow-[0_18px_44px_rgba(28,200,138,0.28)] transition hover:bg-[#35df91] sm:w-auto"
+        >
+          Recuperar controle da rotina
+          <ArrowRight className="h-5 w-5" />
+        </button>
+      </div>
+      <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055] p-3 shadow-[0_28px_80px_rgba(0,0,0,0.28)]">
+        <img src={madrugadaTristeImage} alt="Médico trabalhando até tarde em um consultório" className="aspect-[4/3] w-full rounded-xl object-cover" />
       </div>
     </div>
   </section>
 );
 
 const BenefitsSection = () => (
-  <section className="relative overflow-hidden bg-[#050709] px-5 py-20 sm:px-8 lg:px-10 lg:py-24">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(30,136,229,0.14),transparent_34%)]" />
+  <section className="relative overflow-hidden bg-[#050709] px-5 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(30,136,229,0.14),transparent_32%),radial-gradient(circle_at_78%_78%,rgba(28,200,138,0.12),transparent_30%)]" />
     <div className="relative mx-auto max-w-7xl">
-      <div className="mx-auto max-w-3xl text-center">
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">Benefícios reais</p>
-        <h2 className="mt-4 text-[clamp(32px,3.8vw,46px)] font-extrabold leading-tight">
-          Tecnologia que aparece na rotina, no caixa e no atendimento.
-        </h2>
+      <div className="grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-end lg:gap-14">
+        <div className="order-1 lg:order-2">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">Benefícios reais</p>
+          <h2 className="mt-4 text-[clamp(32px,3.8vw,46px)] font-extrabold leading-tight">
+            Tecnologia que aparece na rotina, no caixa e no atendimento.
+          </h2>
+          <p className="mt-5 text-base leading-7 text-white/68 sm:text-lg sm:leading-8">
+            A operação fica mais previsível quando agenda, atendimento, equipe e indicadores trabalham no mesmo fluxo.
+          </p>
+        </div>
+
+        <div className="order-2 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055] p-3 shadow-[0_26px_76px_rgba(0,0,0,0.32)] lg:order-1">
+          <img src={cardClinic} alt="Equipe clínica em atendimento organizado" className="aspect-[16/10] w-full rounded-xl object-cover" />
+        </div>
       </div>
-      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+      <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3">
         {benefits.map((benefit) => {
           const Icon = benefit.icon;
           return (
-            <article key={benefit.title} className="rounded-2xl border border-white/10 bg-white/[0.045] p-6 backdrop-blur">
-              <Icon className="h-6 w-6 text-emerald-300" />
-              <h3 className="mt-6 text-xl font-bold leading-tight">{benefit.title}</h3>
+            <article key={benefit.title} className="min-h-[168px] rounded-xl border border-white/10 bg-white/[0.045] p-5 backdrop-blur">
+              <span className="grid h-10 w-10 place-items-center rounded-md bg-emerald-300/12 text-emerald-300">
+                <Icon className="h-5 w-5" />
+              </span>
+              <h3 className="mt-5 text-lg font-extrabold leading-tight">{benefit.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-white/62">{benefit.text}</p>
             </article>
           );
         })}
       </div>
+
+      <button
+        type="button"
+        onClick={() => scrollToElement("form-contato")}
+        className="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#1CC88A] px-5 py-3.5 text-sm font-extrabold text-[#04110b] shadow-[0_18px_44px_rgba(28,200,138,0.28)] transition hover:bg-[#35df91] sm:w-auto "
+      >
+        Ver como aplicar na minha clínica
+        <ArrowRight className="h-5 w-5" />
+      </button>
     </div>
   </section>
 );
@@ -611,18 +669,37 @@ const BenefitsSection = () => (
 const DevicesSection = () => (
   <section className="relative overflow-hidden bg-[#050709] px-5 py-20 sm:px-8 lg:px-10 lg:py-24">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_48%,rgba(28,200,138,0.18),transparent_32%)]" />
-    <div className="relative mx-auto max-w-7xl text-center">
-      <h2 className="mx-auto max-w-3xl text-[clamp(32px,3.8vw,46px)] font-extrabold leading-tight">
-        Um ecossistema visual para administrar sua clínica em tempo real.
-      </h2>
-      <div className="relative mx-auto mt-12 max-w-5xl">
-        <div className="rounded-2xl border border-white/12 bg-white/[0.055] p-4 shadow-[0_34px_100px_rgba(0,0,0,0.4)] backdrop-blur">
+    <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-16">
+      <div>
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">Ecossistema visual</p>
+        <h2 className="mt-4 max-w-2xl text-[clamp(32px,3.8vw,46px)] font-extrabold leading-tight">
+          Um ecossistema visual para administrar sua clínica em tempo real.
+        </h2>
+        <p className="mt-6 max-w-xl text-lg leading-8 text-white/70">
+          Dashboards, agenda e finanças com visão integrada para decidir mais rapido, sem perder o controle do atendimento.
+        </p>
+      </div>
+
+      <div className="relative flex flex-col-reverse gap-10 lg:gap-12">
+        <div className="rounded-2xl border border-white/12 bg-white/[0.055] p-4 shadow-[0_34px_100px_rgba(0,0,0,0.4)] backdrop-blur lg:ml-auto lg:max-w-[560px]">
           <img src={agendaIa} alt="Dashboard Prontofy em notebook, tablet e celular" className="w-full rounded-xl object-cover" />
         </div>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:absolute lg:inset-x-0 lg:top-8 lg:mt-0 lg:grid-cols-4">
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:hidden">
           {floatingCards.map((card) => (
-            <span key={card} className="rounded-xl border border-white/12 bg-[#071725]/80 px-4 py-3 text-sm font-semibold text-white/82 shadow-lg backdrop-blur">
+            <span key={card} className="rounded-xl border border-white/10 bg-[#071725]/70 px-4 py-6 text-base font-semibold text-white/82 shadow-lg backdrop-blur ">
               {card}
+            </span>
+          ))}
+        </div>
+
+        <div className="pointer-events-none absolute inset-0 hidden lg:block">
+          {floatingCardPositions.map((card) => (
+            <span
+              key={card.text}
+              className={`absolute rounded-xl border border-white/12 bg-[#071725]/70 px-4 py-3 text-sm font-semibold text-white/82 shadow-lg backdrop-blur  ${card.className}`}
+            >
+              {card.text}
             </span>
           ))}
         </div>
@@ -634,9 +711,11 @@ const DevicesSection = () => (
 const DifferentialsSection = () => (
   <section className="relative overflow-hidden bg-[#050709] px-5 py-20 sm:px-8 lg:px-10 lg:py-24">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(28,200,138,0.14),transparent_30%),radial-gradient(circle_at_78%_58%,rgba(30,136,229,0.16),transparent_34%)]" />
-    <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-      <div>
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">Diferencial Prontofy</p>
+    <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-14">
+      <div className="lg:pr-6">
+        <span className="inline-flex items-center rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[0.7rem] font-bold uppercase tracking-[0.2em] text-emerald-300">
+          Diferencial Prontofy
+        </span>
         <h2 className="mt-4 text-[clamp(34px,4vw,54px)] font-extrabold leading-tight">
           Mais que um software médico. Um fluxo inteligente para a clínica.
         </h2>
@@ -644,19 +723,20 @@ const DifferentialsSection = () => (
           Atendimento, gestão, automações e inteligência artificial conectados em uma operação moderna, segura e escalável.
         </p>
       </div>
-      <div className="relative rounded-2xl border border-white/10 bg-white/[0.055] p-8 backdrop-blur">
-        <div className="grid gap-5 sm:grid-cols-2">
+      <div className="relative rounded-2xl border border-white/10 bg-[#0a131e]/80 p-6 shadow-[0_28px_80px_rgba(0,0,0,0.35)] backdrop-blur sm:p-7 lg:ml-auto">
+        <div className="grid gap-4 sm:grid-cols-2">
           {[
             { icon: Bot, text: "IA no prontuário" },
             { icon: MessageCircle, text: "WhatsApp integrado" },
             { icon: Activity, text: "Dashboards operacionais" },
             { icon: ShieldCheck, text: "Dados protegidos" },
+            { icon: CalendarCheck, text: "Agenda e automações" },
           ].map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.text} className="rounded-xl border border-white/10 bg-black/20 p-5">
+              <div key={item.text} className="rounded-xl border border-white/10 bg-[#0b1622]/90 p-5">
                 <Icon className="h-6 w-6 text-emerald-300" />
-                <p className="mt-4 font-bold">{item.text}</p>
+                <p className="mt-4 text-sm font-bold text-white/90">{item.text}</p>
               </div>
             );
           })}
@@ -681,17 +761,25 @@ const HowItWorksSection = () => (
             const Icon = step.icon;
             return (
               <article key={step.title} className="flex gap-4 rounded-xl border border-white/10 bg-white/[0.055] p-5 backdrop-blur">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-md bg-emerald-300/12 text-emerald-300">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-emerald-300/12 text-emerald-300">
                   <Icon className="h-5 w-5" />
                 </span>
                 <div>
-                  <h3 className="font-bold">{step.title}</h3>
+                  <h3 className="text-sm font-extrabold text-emerald-300 sm:text-base">{step.title}</h3>
                   <p className="mt-1 text-sm leading-6 text-white/64">{step.text}</p>
                 </div>
               </article>
             );
           })}
         </div>
+        <button
+          type="button"
+          onClick={() => scrollToElement("form-contato")}
+          className="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#1CC88A] px-6 py-3.5 text-sm font-extrabold text-[#04110b] shadow-[0_18px_44px_rgba(28,200,138,0.28)] transition hover:bg-[#35df91] sm:w-auto"
+        >
+          Quero implementar com a Prontofy
+          <ArrowRight className="h-5 w-5" />
+        </button>
       </div>
     </div>
   </section>
@@ -704,9 +792,17 @@ const BeforeAfterSection = () => (
       <h2 className="mx-auto max-w-3xl text-center text-[clamp(32px,3.8vw,46px)] font-extrabold leading-tight">
         Do operacional pesado para uma rotina inteligente.
       </h2>
-      <div className="mt-12 grid gap-5 lg:grid-cols-2">
+      <div className="mt-12 hidden gap-5 lg:grid lg:grid-cols-2">
         <CompareCard image={antesImage} label="Antes" title="Sobrecarga e desorganização" items={["Atrasos e mensagens acumuladas", "Retrabalho administrativo", "Estresse operacional constante"]} />
         <CompareCard image={depoisImage} label="Depois" title="Controle, produtividade e qualidade de vida" items={["Dashboards inteligentes", "Automações e IA na rotina", "Equipe com clareza para executar"]} highlight />
+      </div>
+      <div className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 lg:hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex min-w-[84vw] snap-center">
+          <CompareCard image={antesImage} label="Antes" title="Sobrecarga e desorganização" items={["Atrasos e mensagens acumuladas", "Retrabalho administrativo", "Estresse operacional constante"]} />
+        </div>
+        <div className="flex min-w-[84vw] snap-center">
+          <CompareCard image={depoisImage} label="Depois" title="Controle, produtividade e qualidade de vida" items={["Dashboards inteligentes", "Automações e IA na rotina", "Equipe com clareza para executar"]} highlight />
+        </div>
       </div>
     </div>
   </section>
@@ -717,13 +813,17 @@ const FinalCTASection = () => (
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(28,200,138,0.18),transparent_34%)]" />
     <div className="relative mx-auto max-w-3xl">
       <h2 className="text-[clamp(34px,4vw,54px)] font-extrabold leading-tight">Está na hora da sua clínica operar em outro nível.</h2>
-      <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/72">
-        Modernize sua operação, ganhe qualidade de vida e crie uma base mais organizada para crescer.
+      <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/72 sm:text-lg">
+        Um diagnóstico direto para organizar agenda, equipe e finanças com clareza.
       </p>
-      <a href="#form-contato" className="mt-9 inline-flex w-[88%] items-center justify-center gap-3 rounded-xl bg-[#1CC88A] px-8 py-5 text-base font-extrabold uppercase tracking-wide text-[#04110b] shadow-[0_18px_52px_rgba(28,200,138,0.34)] transition hover:bg-[#35df91] sm:w-auto">
+      <button
+        type="button"
+        onClick={() => scrollToElement("form-contato")}
+        className="mt-9 inline-flex w-full items-center justify-center gap-3 rounded-xl bg-[#1CC88A] px-8 py-5 text-base font-extrabold uppercase tracking-wide text-[#04110b] shadow-[0_18px_52px_rgba(28,200,138,0.34)] transition hover:bg-[#35df91] sm:w-auto"
+      >
         Quero minha análise estratégica
         <ArrowRight className="h-5 w-5" />
-      </a>
+      </button>
     </div>
   </section>
 );
