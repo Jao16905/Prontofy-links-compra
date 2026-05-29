@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .env.production
+
+*.md
+imagens_insp
+imagens_insp/*.png

@@ -231,29 +231,34 @@ const FormularioLeads = () => {
 
   return (
     <main className="min-h-screen bg-[#050709] text-white">
-      <section className="relative min-h-screen overflow-hidden px-5 py-6 sm:px-8 lg:px-10 lg:py-0">
+      <section className="relative isolate min-h-screen overflow-hidden px-5 pb-14 pt-5 sm:px-8 md:pb-0 lg:px-10">
         <div className="absolute inset-0 bg-[#050709]" />
-        <img src={solucaoDeGestao} alt="" className="absolute inset-0 h-full w-full object-cover object-[48%_0%] opacity-[0.78] md:object-center" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,7,9,0.60)_0%,rgba(5,7,9,0.36)_43%,rgba(5,7,9,0.60)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,7,9,0.08)_0%,rgba(5,7,9,0.24)_50%,rgba(5,7,9,0.70)_100%)] md:bg-[linear-gradient(90deg,rgba(5,7,9,0.44)_0%,rgba(5,7,9,0.18)_44%,rgba(5,7,9,0.60)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_54%,rgba(28,200,138,0.14),transparent_28%),radial-gradient(circle_at_80%_24%,rgba(30,136,229,0.10),transparent_30%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,rgba(5,7,9,0)_0%,#050709_100%)]" />
+        <img
+          src={solucaoDeGestao}
+          alt=""
+          className="absolute left-1/2 top-0 h-auto w-[150%] max-w-none -translate-x-1/2 object-contain opacity-76 sm:w-[126%] sm:opacity-78 md:inset-0 md:left-0 md:h-full md:w-full md:translate-x-0 md:object-cover md:object-[48%_50%] md:opacity-80 xl:object-center"
+        />
+        <div className="absolute inset-x-[-16%] bottom-[-18%] top-[14%] bg-[linear-gradient(180deg,rgba(5,7,9,0)_0%,rgba(5,7,9,0.34)_28%,rgba(5,7,9,0.74)_58%,#050709_100%)] blur-[24px] md:inset-0 md:bg-[linear-gradient(90deg,rgba(5,7,9,0.76)_0%,rgba(5,7,9,0.52)_42%,rgba(5,7,9,0.72)_100%)] md:blur-0" />
+        <div className="absolute left-1/2 top-[31%] h-[34vh] w-[calc(100%+112px)] -translate-x-1/2 bg-[#050709]/82 blur-[44px] md:hidden" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,7,9,0.2)_0%,rgba(5,7,9,0.16)_28%,rgba(5,7,9,0.5)_62%,rgba(5,7,9,0.88)_100%)] md:hidden" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_42%,rgba(28,200,138,0.15),transparent_30%),radial-gradient(circle_at_78%_24%,rgba(30,136,229,0.12),transparent_34%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-80 bg-[linear-gradient(180deg,rgba(5,7,9,0)_0%,rgba(5,7,9,0.64)_42%,#050709_88%)] sm:h-96 md:h-48 md:bg-[linear-gradient(180deg,rgba(5,7,9,0)_0%,#050709_100%)]" />
 
-        <div className="relative z-10 mx-auto flex max-w-[1540px] justify-center pt-2 md:absolute md:left-1/2 md:top-8 md:-translate-x-1/2 md:pt-0">
+        <div className="relative z-10 mx-auto flex max-w-7xl justify-center pt-1 md:absolute md:left-1/2 md:top-7 md:-translate-x-1/2 md:pt-0">
           <ProntofyLogo />
         </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] w-full max-w-[1540px] flex-col justify-center gap-10 pt-8 md:min-h-screen md:flex-row md:items-center md:justify-between md:gap-12 md:pt-24 lg:gap-20">
-          <div className="lead-enter w-full max-w-[720px] py-8 md:w-[45%] md:max-w-none md:py-0">
-            <div className="max-w-[680px] md:ml-0">
-              <h1 className="text-4xl font-extrabold leading-[1.03] sm:text-5xl lg:text-[3.2rem] xl:text-[3.6rem]">
+        <div className="relative z-10 mx-auto grid min-h-[calc(100vh-72px)] w-full max-w-7xl grid-cols-1 items-start gap-7 pt-14 sm:pt-20 md:min-h-screen md:grid-cols-[minmax(0,0.96fr)_minmax(420px,0.78fr)] md:items-center md:gap-10 md:pt-24 lg:gap-16 xl:max-w-[1280px]">
+          <div className="lead-enter w-full max-w-[680px] md:max-w-none">
+            <div className="max-w-[640px] md:ml-0">
+              <h1 className="text-[2.1rem] font-extrabold leading-[1.02] sm:text-5xl lg:text-[3.2rem] xl:text-[3.55rem]">
                 Solução de gestão para clínicas{" "}
                 <span className="text-[#1CC88A]">modernas e inteligentes</span>
               </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/82 sm:text-xl">
+              <p className="mt-8 max-w-2xl text-base leading-7 text-white/82 sm:text-lg lg:text-xl lg:leading-8">
                 Entenda como a Prontofy pode organizar sua operação, automatizar rotinas e devolver mais tempo para sua equipe cuidar dos pacientes.
               </p>
-              <a href="#dor-clinica" className="mt-8 inline-flex items-center gap-3 text-base font-semibold text-white/88 transition hover:text-[#1CC88A]">
+              <a href="#dor-clinica" className="mt-6 inline-flex items-center gap-3 text-sm font-semibold text-white/88 transition hover:text-[#1CC88A] sm:text-base">
                 <span className="grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-white/8 backdrop-blur">
                   <ArrowDown className="h-5 w-5" />
                 </span>
@@ -262,7 +267,7 @@ const FormularioLeads = () => {
             </div>
           </div>
 
-          <div className="relative z-20 w-full px-2 sm:px-4 md:px-0 max-w-full sm:max-w-[520px] md:w-[52%] md:max-w-[680px] lg:w-[45%]">
+          <div className="relative z-20 w-full max-w-full justify-self-center sm:max-w-[500px] md:max-w-[500px] md:justify-self-end lg:max-w-[540px] xl:max-w-[560px]">
             <LeadForm
               formData={formData}
               errors={errors}
@@ -309,19 +314,19 @@ const LeadForm = ({
     id="form-contato"
     onSubmit={onSubmit}
     noValidate
-    className="lead-enter lead-enter-delay-2 mx-auto max-w-full sm:max-w-[520px] md:max-w-[680px] lg:max-w-[560px] rounded-[1.75rem] border border-white/10 bg-[#252525]/76 p-4 text-white shadow-[0_30px_90px_rgba(0,0,0,0.44)] backdrop-blur-xl sm:p-8 lg:p-10"
+    className="lead-enter lead-enter-delay-2 mx-auto w-full max-w-full rounded-[1.125rem] border border-white/10 bg-[#252525]/76 p-5 text-white shadow-[0_30px_90px_rgba(0,0,0,0.44)] backdrop-blur-xl sm:max-w-[500px] sm:rounded-[1.35rem] sm:p-6 md:max-w-[500px] lg:max-w-[540px] lg:p-7 xl:max-w-[560px]"
   >
-    <div className="mb-7">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#1CC88A] sm:text-sm">Diagnóstico Prontofy</p>
-      <h2 className="mt-2 text-xl font-extrabold leading-tight text-white sm:text-[1.5rem] lg:text-[1.35rem]">
+    <div className="mb-5">
+      <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#1CC88A] sm:text-xs">Diagnóstico Prontofy</p>
+      <h2 className="mt-1.5 text-lg font-extrabold leading-tight text-white sm:text-[1.35rem] lg:text-[1.3rem]">
         Fale com um especialista
       </h2>
-      <p className="mt-2 text-sm leading-6 text-white/62">
+      <p className="mt-1.5 text-xs leading-5 text-white/62 sm:text-sm">
         Preencha os dados para receber uma análise da operação da sua clínica.
       </p>
     </div>
 
-    <div className="grid gap-5">
+    <div className="grid gap-4 lg:gap-3.5">
       <div className="hidden" aria-hidden="true">
         <label htmlFor="website">Website</label>
         <input id="website" name="website" tabIndex={-1} autoComplete="off" value={formData.website} onChange={(event) => updateField("website", event.target.value)} />
@@ -415,7 +420,7 @@ const LeadForm = ({
         </Field>
       )}
 
-      <label className="mt-1 flex items-center gap-3 text-sm font-semibold text-white/82">
+      <label className="mt-0.5 flex items-center gap-3 text-xs font-semibold leading-5 text-white/82 sm:text-sm">
         <input
           id="ofertas_ex"
           name="ofertas_ex"
@@ -431,25 +436,25 @@ const LeadForm = ({
     <button
       type="submit"
       disabled={isSubmitting}
-      className="mt-6 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#1CC88A] px-5 py-3 text-sm font-extrabold text-[#04110b] shadow-[0_18px_44px_rgba(28,200,138,0.32)] transition hover:bg-[#35df91] disabled:cursor-not-allowed disabled:opacity-70"
+      className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-full bg-[#1CC88A] px-5 py-2.5 text-sm font-extrabold text-[#04110b] shadow-[0_18px_44px_rgba(28,200,138,0.32)] transition hover:bg-[#35df91] disabled:cursor-not-allowed disabled:opacity-70"
     >
       {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5" />}
       Falar com um especialista
     </button>
 
-    <p className="mt-7 text-xs leading-5 text-white/58">
+    <p className="mt-5 text-[0.7rem] leading-5 text-white/58 sm:text-xs">
       Ao enviar, você concorda em receber contato da Prontofy para entender sua operação clínica e apresentar uma solução adequada.
     </p>
 
     {isSuccess && (
-      <p className="mt-5 flex items-start gap-2 rounded-xl border border-[#1CC88A]/30 bg-[#1CC88A]/12 p-4 text-sm font-semibold text-white">
+      <p className="mt-4 flex items-start gap-2 rounded-xl border border-[#1CC88A]/30 bg-[#1CC88A]/12 p-3 text-sm font-semibold text-white">
         <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#1CC88A]" />
         Obrigado! Suas informações foram enviadas com sucesso.
       </p>
     )}
 
     {status === "error" && (
-      <p className="mt-5 rounded-xl border border-red-300/30 bg-red-500/12 p-4 text-sm font-semibold text-red-100">
+      <p className="mt-4 rounded-xl border border-red-300/30 bg-red-500/12 p-3 text-sm font-semibold text-red-100">
         Não foi possível enviar suas informações. Tente novamente.
       </p>
     )}
@@ -458,43 +463,43 @@ const LeadForm = ({
 
 const PainSection = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
+
+  const moveCarousel = useCallback((direction: 1 | -1) => {
+    const container = scrollRef.current;
+    const child = container?.firstElementChild as HTMLElement | null;
+    if (!container || !child) return;
+
+    const gap = 16;
+    const step = child.clientWidth + gap;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+    const isAtStart = container.scrollLeft <= 5;
+    const isAtEnd = container.scrollLeft >= maxScroll - 5;
+
+    if (direction > 0 && isAtEnd) {
+      container.scrollTo({ left: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (direction < 0 && isAtStart) {
+      container.scrollTo({ left: maxScroll, behavior: "smooth" });
+      return;
+    }
+
+    container.scrollBy({ left: step * direction, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) return;
 
     let intervalId = window.setInterval(() => {
-      if (!scrollRef.current || isHovered) return;
-      
-      const container = scrollRef.current;
-      const child = container.firstElementChild as HTMLElement;
-      if (!child) return;
-      
-      const maxScroll = container.scrollWidth - container.clientWidth;
-      if (container.scrollLeft >= maxScroll - 5) {
-        container.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        container.scrollBy({ left: child.clientWidth + 16, behavior: "smooth" });
-      }
+      if (isCarouselPaused) return;
+      moveCarousel(1);
     }, 4000);
 
     return () => window.clearInterval(intervalId);
-  }, [isHovered]);
-
-  const scrollBack = () => {
-    if (!scrollRef.current) return;
-    const container = scrollRef.current;
-    const child = container.firstElementChild as HTMLElement;
-    if (child) container.scrollBy({ left: -(child.clientWidth + 16), behavior: "smooth" });
-  };
-
-  const scrollNext = () => {
-    if (!scrollRef.current) return;
-    const container = scrollRef.current;
-    const child = container.firstElementChild as HTMLElement;
-    if (child) container.scrollBy({ left: child.clientWidth + 16, behavior: "smooth" });
-  };
+  }, [isCarouselPaused, moveCarousel]);
 
   return (
     <section id="dor-clinica" className="relative overflow-hidden bg-[#050709] px-5 py-20 sm:px-8 lg:px-10 lg:py-24">
@@ -510,19 +515,23 @@ const PainSection = () => {
           </p>
         </div>
 
-        <div className="relative overflow-hidden">
-          <div 
+        <div
+          className="relative overflow-hidden px-1 py-3 sm:px-4"
+          onMouseEnter={() => setIsCarouselPaused(true)}
+          onMouseLeave={() => setIsCarouselPaused(false)}
+          onFocus={() => setIsCarouselPaused(true)}
+          onBlur={() => setIsCarouselPaused(false)}
+          onTouchStart={() => setIsCarouselPaused(true)}
+          onTouchEnd={() => setIsCarouselPaused(false)}
+        >
+          <div
             ref={scrollRef}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onTouchStart={() => setIsHovered(true)}
-            onTouchEnd={() => setIsHovered(false)}
-            className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
             {painStats.map((stat) => {
               const Icon = stat.icon;
               return (
-                <article key={stat.text} className="min-h-[190px] flex-[0_0_82vw] sm:flex-[0_0_45%] lg:flex-[0_0_47%] snap-center rounded-2xl border border-emerald-300/14 bg-white/[0.055] p-6 shadow-[0_0_54px_rgba(28,200,138,0.08)] backdrop-blur">
+                <article key={stat.text} className="min-h-[190px] flex-[0_0_84vw] snap-center rounded-2xl border border-emerald-300/14 bg-white/[0.055] p-6 shadow-[0_0_54px_rgba(28,200,138,0.08)] backdrop-blur sm:flex-[0_0_46%] lg:flex-[0_0_47%]">
                   <Icon className="h-6 w-6 text-[#b8b8b8]" />
                   <p className="mt-6 text-3xl font-extrabold text-[#ff4d4d]">{stat.value}</p>
                   <p className="mt-3 text-sm leading-6 text-white/66">{stat.text}</p>
@@ -531,22 +540,22 @@ const PainSection = () => {
             })}
           </div>
 
-          <div className="mt-2 flex items-center justify-end gap-3 lg:justify-start">
-            <button 
-              onClick={scrollBack}
-              aria-label="Card anterior"
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white transition hover:bg-white/10 hover:text-emerald-300"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button 
-              onClick={scrollNext}
-              aria-label="Próximo card"
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white transition hover:bg-white/10 hover:text-emerald-300"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => moveCarousel(-1)}
+            aria-label="Card anterior"
+            className="absolute left-1 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-[#050709]/72 text-white shadow-[0_16px_38px_rgba(0,0,0,0.28)] backdrop-blur transition hover:border-emerald-300/36 hover:bg-white/10 hover:text-emerald-300 sm:left-3"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => moveCarousel(1)}
+            aria-label="Próximo card"
+            className="absolute right-1 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-[#050709]/72 text-white shadow-[0_16px_38px_rgba(0,0,0,0.28)] backdrop-blur transition hover:border-emerald-300/36 hover:bg-white/10 hover:text-emerald-300 sm:right-3"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </section>
@@ -739,9 +748,9 @@ const CompareCard = ({ image, label, title, items, highlight = false }: { image:
 
 const inputClassName = (error?: string) =>
   [
-    "mt-2 h-10 w-full rounded-none border-0 border-b bg-transparent px-0 text-sm font-medium text-white outline-none transition placeholder:text-white/48 sm:h-11 lg:h-10",
+    "mt-1.5 h-9 w-full rounded-none border-0 border-b bg-transparent px-0 text-sm font-medium text-white outline-none transition placeholder:text-white/48 sm:h-10",
     "focus:border-[#1CC88A] focus:ring-0",
-    error ? "border-red-300" : "border-white/22",
+    error ? "border-red-300" : "border-white/30",
   ].join(" ");
 
 const CustomSelect = ({
@@ -764,7 +773,7 @@ const CustomSelect = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative mt-2">
+    <div className="relative mt-1.5">
       <button
         id={id}
         type="button"
@@ -773,10 +782,10 @@ const CustomSelect = ({
         onClick={() => setIsOpen((current) => !current)}
         onBlur={() => window.setTimeout(() => setIsOpen(false), 120)}
         className={[
-          "flex h-11 w-full items-center justify-between rounded-none border-0 border-b bg-transparent px-0 text-left text-sm font-semibold outline-none transition sm:h-12",
+          "flex h-10 w-full items-center justify-between rounded-none border-0 border-b bg-transparent px-0 text-left text-sm font-semibold outline-none transition",
           "focus:border-[#1CC88A] focus:ring-0",
           value ? "text-white" : "text-white/48",
-          error ? "border-red-300" : "border-white/22",
+          error ? "border-red-300" : "border-white/30",
         ].join(" ")}
       >
         <span className="truncate">{value || placeholder}</span>
@@ -790,7 +799,7 @@ const CustomSelect = ({
             openUp ? "bottom-[calc(100%+8px)]" : "top-[calc(100%+8px)]",
           ].join(" ")}
         >
-          <div className="max-h-52 overflow-y-auto p-2 sm:max-h-60" role="listbox" aria-labelledby={id}>
+          <div className="max-h-48 overflow-y-auto p-2 sm:max-h-56" role="listbox" aria-labelledby={id}>
             {options.map((option) => (
               <button
                 key={option}
@@ -803,7 +812,7 @@ const CustomSelect = ({
                   setIsOpen(false);
                 }}
                 className={[
-                  "w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition",
+                  "w-full rounded-lg px-3 py-2 text-left text-sm font-semibold transition",
                   value === option ? "bg-[#1CC88A]/18 text-white" : "text-white/76 hover:bg-white/8 hover:text-white",
                 ].join(" ")}
               >
@@ -819,10 +828,10 @@ const CustomSelect = ({
 
 const Field = ({ label, error, children }: { label: string; error?: string; children: ReactNode }) => {
   return (
-    <div className="block text-sm font-semibold text-white/86">
+    <div className="block text-[0.83rem] font-semibold text-white/86 sm:text-sm">
       <span>{label}</span>
       {children}
-      {error && <span className="mt-2 block text-xs font-semibold text-red-200">{error}</span>}
+      {error && <span className="mt-1.5 block text-xs font-semibold text-red-200">{error}</span>}
     </div>
   );
 };

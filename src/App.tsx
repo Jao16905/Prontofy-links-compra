@@ -7,6 +7,7 @@ import Apresentacao from "./pages/Apresentacao";
 import FormularioLeads from "./pages/FormularioLeads";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { CookieConsent } from "@/components/CookieConsent";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <CookieConsent />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />

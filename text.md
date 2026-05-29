@@ -4,15 +4,15 @@ As sessões da página `/formulario` estão assim:
     
     Título: **“Menos caos operacional. Mais tempo para viver.”**
     
-- [x]  **Dor e conscientização**
+- []  **Dor e conscientização**
     
     Título: **“A desorganização clínica custa tempo, dinheiro e qualidade de vida.”**
     
     ![image.png](./image%20(1).png)
     
-    - [x]  Concertar a rolagem dos cards
-    - [x]  Colocar uma animação que passa automáticamente
-    - [x]  Colocar setinha para rolar os cards
+    - []  Concertar a rolagem dos cards
+    - []  Colocar uma animação que passa automáticamente
+    - []  Colocar setinha para rolar os cards
 - [ ]  **Qualidade de vida**
     
     Título: **“Sua clínica não precisa acompanhar você até em casa.”**
