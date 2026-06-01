@@ -158,7 +158,10 @@ const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(em
 
 const scrollToElement = (id: string) => {
   const element = document.getElementById(id);
-  if (element) element.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (!element) return;
+
+  const top = element.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({ top: Math.max(0, top - 12), behavior: "smooth" });
 };
 
 const FormularioLeads = () => {
@@ -249,21 +252,23 @@ const FormularioLeads = () => {
     <main className="min-h-screen bg-[#050709] text-white">
       <section className="relative isolate min-h-screen overflow-hidden px-5 pb-14 pt-5 sm:px-8 md:pb-0 lg:px-10">
         <div className="absolute inset-0 bg-[#050709]" />
-        <img
-          src={solucaoDeGestao}
-          alt=""
-          className="absolute left-1/2 top-0 h-auto w-[150%] max-w-none -translate-x-1/2 object-contain opacity-76 sm:w-[126%] sm:opacity-78 md:inset-0 md:left-0 md:h-full md:w-full md:translate-x-0 md:object-cover md:object-[48%_50%] md:opacity-80 xl:object-center"
-        />
-        <div className="absolute inset-x-[-16%] bottom-[-18%] top-[14%] bg-[linear-gradient(180deg,rgba(5,7,9,0)_0%,rgba(5,7,9,0.34)_28%,rgba(5,7,9,0.74)_58%,#050709_100%)] blur-[24px] md:inset-0 md:bg-[linear-gradient(90deg,rgba(5,7,9,0.76)_0%,rgba(5,7,9,0.52)_42%,rgba(5,7,9,0.72)_100%)] md:blur-0" />
-        <div className="absolute left-1/2 top-[31%] h-[34vh] w-[calc(100%+112px)] -translate-x-1/2 bg-[#050709]/82 blur-[44px] md:hidden" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,7,9,0.2)_0%,rgba(5,7,9,0.16)_28%,rgba(5,7,9,0.5)_62%,rgba(5,7,9,0.88)_100%)] md:hidden" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_42%,rgba(28,200,138,0.15),transparent_30%),radial-gradient(circle_at_78%_24%,rgba(30,136,229,0.12),transparent_34%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-80 bg-[linear-gradient(180deg,rgba(5,7,9,0)_0%,rgba(5,7,9,0.64)_42%,#050709_88%)] sm:h-96 md:h-48 md:bg-[linear-gradient(180deg,rgba(5,7,9,0)_0%,#050709_100%)]" />
+        <div className="absolute inset-x-0 top-0 md:inset-0 overflow-hidden">
+          <img
+            src={solucaoDeGestao}
+            alt=""
+            className="z-10 relative left-1/2 top-0 h-auto w-[150%] max-w-none -translate-x-1/2 object-contain opacity-76 sm:w-[126%] sm:opacity-78 md:absolute md:inset-0 md:left-0 md:h-full md:w-full md:translate-x-0 md:object-cover md:object-[48%_50%] md:opacity-80 xl:object-center"
+          />
+          <div className="z-10 absolute bottom-0 inset-x-0 h-24 md:h-36 bg-gradient-to-t from-[#050709] to-transparent" />
+          <div className="z-10 absolute bottom-0 inset-x-0 h-full bg-gradient-to-t from-[#050709] to-transparent md:hidden" />
+        </div>
+        <div className="absolute z-10 left-1/2 top-[26%] h-[40vh] w-[calc(100%+140px)] -translate-x-1/2 bg-[#050709]/88 blur-[56px] md:hidden" />
+        <div className="absolute z-10 inset-0 bg-[linear-gradient(180deg,rgba(5,7,9,0.2)_0%,rgba(5,7,9,0.16)_28%,rgba(5,7,9,0.5)_62%,rgba(5,7,9,0.88)_100%)] md:hidden" />
+        <div className="absolute z-10 inset-0 bg-[radial-gradient(circle_at_22%_42%,rgba(28,200,138,0.15),transparent_30%),radial-gradient(circle_at_78%_24%,rgba(30,136,229,0.12),transparent_34%)]" />
 
-        <div className="relative z-10 mx-auto flex max-w-7xl justify-center pt-1 md:absolute md:left-1/2 md:top-7 md:-translate-x-1/2 md:pt-0">
+
+        <div className="relative z-10 mx-auto flex max-w-7xl justify-center pt-1 md:absolute md:left-1/2 md:top-10 md:-translate-x-1/2 md:pt-0">
           <ProntofyLogo />
         </div>
-
         <div className="relative z-10 mx-auto grid min-h-[calc(100vh-72px)] w-full max-w-7xl grid-cols-1 items-start gap-7 pt-14 sm:pt-20 md:min-h-screen md:grid-cols-[minmax(0,0.96fr)_minmax(420px,0.78fr)] md:items-center md:gap-10 md:pt-24 lg:gap-16 xl:max-w-[1280px]">
           <div className="lead-enter w-full max-w-[680px] md:max-w-none">
             <div className="max-w-[640px] md:ml-0">
@@ -446,10 +451,10 @@ const LeadForm = ({
           name="ofertas_ex"
           type="checkbox"
           checked={formData.ofertas_ex}
-          onChange={(event) => updateField("ofertas_ex", event.target.checked)}
+          onChange={(event) => updateField("ofertas_ex", `${event.target.checked}`)}
           className="h-4 w-4 rounded border border-white/30 bg-transparent text-[#1CC88A] focus:ring-2 focus:ring-[#1CC88A]/60"
         />
-        Quero receber ofertas e promocoes
+        Quero receber ofertas e promoções
       </label>
     </div>
 
