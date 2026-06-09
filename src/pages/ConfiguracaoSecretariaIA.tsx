@@ -14,11 +14,11 @@ import {
 import ProntofyLogo from "@/components/ProntofyLogo";
 
 const DIAS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"];
-const ESTABELECIMENTOS = ["Consultorio individual", "Clinica", "Coworking"];
-const TONS = ["Acolhedor", "Formal", "Premium", "Descontraido", "Tecnico"];
-const PAGAMENTOS = ["Pix", "Cartao", "Dinheiro", "Boleto", "Transferencia"];
-const ESPECIALIDADES = ["Clinica medica", "Cardiologia", "Dermatologia", "Pediatria", "Psiquiatria", "Ortopedia", "Outra"];
-const DEFAULT_WELCOME_MESSAGE = "Ola, aqui e a secretaria virtual da clinica X.";
+const ESTABELECIMENTOS = ["Consultório individual", "Clínica", "Coworking"];
+const TONS = ["Acolhedor", "Formal", "Premium", "Descontraído", "Técnico"];
+const PAGAMENTOS = ["Pix", "Cartão", "Dinheiro", "Boleto", "Transferência"];
+const ESPECIALIDADES = ["Clínica médica", "Cardiologia", "Dermatologia", "Pediatria", "Psiquiatria", "Ortopedia", "Outra"];
+const DEFAULT_WELCOME_MESSAGE = "Olá, aqui é a secretária virtual da clínica X.";
 const DEFAULT_PATIENT_QUESTIONS = "Nome, idade, motivo da consulta e queixa principal.";
 const WHATSAPP_URL = "https://wa.me/message/YO6R73FVJZHTC1";
 const N8N_WEBHOOK_URL = "https://teste-n8n-editor.6esqeg.easypanel.host/webhook-test/sec-de-ia";
@@ -64,7 +64,7 @@ type FormData = {
 
 const initialData: FormData = {
   nomeClinica: "",
-  tipoEstabelecimento: "Clinica",
+  tipoEstabelecimento: "Clínica",
   endereco: "",
   referencia: "",
   diasFuncionamento: ["Seg", "Ter", "Qua", "Qui", "Sex"],
@@ -79,7 +79,7 @@ const initialData: FormData = {
   permiteEncaixe: "Sim",
   regrasEncaixe: "",
   valoresConsultas: "",
-  formasPagamento: ["Pix", "Cartao"],
+  formasPagamento: ["Pix", "Cartão"],
   convenios: "",
   tomComunicacao: "Acolhedor",
   boasVindas: DEFAULT_WELCOME_MESSAGE,
@@ -91,7 +91,7 @@ const initialData: FormData = {
   regrasUrgencia: "",
   podeRemarcar: "Sim",
   podeCancelar: "Sim",
-  tempoResposta: "Ate 2 minutos",
+  tempoResposta: "Até 2 minutos",
   googleMaps: "",
   funcionalidadesExtras: "",
   cnpj: "",
@@ -99,15 +99,15 @@ const initialData: FormData = {
 };
 
 const stepMeta = [
-  { title: "Consultorio", icon: Building2, fields: ["nomeClinica", "tipoEstabelecimento", "endereco", "googleMaps", "diasFuncionamento", "horaInicio", "horaFim"] },
+  { title: "Consultório", icon: Building2, fields: ["nomeClinica", "tipoEstabelecimento", "endereco", "googleMaps", "diasFuncionamento", "horaInicio", "horaFim"] },
   { title: "Pagamentos", icon: CreditCard, fields: ["valoresConsultas", "formasPagamento", "convenios"] },
   { title: "Atendimento IA", icon: Bot, fields: ["tomComunicacao", "boasVindas", "perguntasIniciais", "podeRemarcar", "podeCancelar", "tempoResposta"] },
 ] as const;
 
 const requiredFieldLabels: Partial<Record<keyof FormData, string>> = {
-  nomeClinica: "nome da clinica ou consultorio",
-  endereco: "endereco completo ou link do Google Maps",
-  googleMaps: "endereco completo ou link do Google Maps",
+  nomeClinica: "nome da clínica ou consultório",
+  endereco: "endereço completo ou link do Google Maps",
+  googleMaps: "endereço completo ou link do Google Maps",
   valoresConsultas: "valores das consultas",
 };
 
@@ -175,13 +175,22 @@ const ConfiguracaoSecretariaIA = () => {
         },
         body: JSON.stringify({
           ...form,
+          formasPagamento: form.formasPagamento.join(", "),
+          atendimentoIA: {
+            tomComunicacao: form.tomComunicacao || initialData.tomComunicacao,
+            boasVindas: form.boasVindas || getDefaultWelcomeMessage(form.nomeClinica),
+            perguntasIniciais: form.perguntasIniciais || DEFAULT_PATIENT_QUESTIONS,
+            podeRemarcar: form.podeRemarcar || initialData.podeRemarcar,
+            podeCancelar: form.podeCancelar || initialData.podeCancelar,
+            tempoResposta: form.tempoResposta || initialData.tempoResposta,
+          },
           data_envio: new Date().toISOString(),
           origem: "configuracao-secretaria-ia",
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Falha ao enviar configuracao");
+        throw new Error("Falha ao enviar configuração");
       }
 
       setProgress(100);
@@ -189,7 +198,7 @@ const ConfiguracaoSecretariaIA = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
       setProgress(90);
-      setSubmitError("Nao foi possivel enviar sua configuracao. Tente novamente.");
+      setSubmitError("Não foi possível enviar sua configuração. Tente novamente.");
       scrollToQuestionsStart();
     } finally {
       setIsSubmitting(false);
@@ -267,8 +276,8 @@ const ConfiguracaoSecretariaIA = () => {
         <div className="relative mx-auto flex min-h-[calc(100vh-80px)] max-w-7xl flex-col justify-center">
           <form ref={formStartRef} onSubmit={handleSubmit} className="mx-auto w-full max-w-5xl rounded-[2rem] border border-white/12 bg-[#111820]/88 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.38)] backdrop-blur-xl sm:p-6 lg:p-8">
               <div className="border-b border-white/10 pb-5">
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#1CC88A]">Checklist de configuracao</p>
-                <h2 className="mt-2 text-2xl font-extrabold">Dados da Secretaria IA</h2>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#1CC88A]">Checklist de configuração</p>
+                <h2 className="mt-2 text-2xl font-extrabold">Dados da Secretária IA</h2>
               </div>
 
               <div className="mt-5">
@@ -354,7 +363,7 @@ const ConfiguracaoSecretariaIA = () => {
                     disabled={isSubmitting}
                     className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1CC88A] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#06131f] shadow-[0_16px_44px_rgba(28,200,138,0.28)] transition hover:bg-[#35df91]"
                   >
-                    {isSubmitting ? "Enviando..." : "Salvar configuracao"}
+                    {isSubmitting ? "Enviando..." : "Salvar configuração"}
                     <Check className="h-4 w-4" />
                   </button>
                 )}
@@ -389,20 +398,20 @@ const IntroScreen = ({ onStart }: { onStart: () => void }) => (
         <ProntofyLogo className="gap-3" iconClassName="h-12 w-12 sm:h-14 sm:w-14" textClassName="text-2xl sm:text-3xl font-light" />
         <div className="mt-12 inline-flex items-center gap-2 rounded-full border border-[#1CC88A]/30 bg-[#1CC88A]/12 px-4 py-2 text-sm font-bold text-[#6ff0bd]">
           <Sparkles className="h-4 w-4" />
-          Secretaria IA Prontofy
+          Secretária IA Prontofy
         </div>
         <h1 className="mt-6 text-[clamp(2.4rem,7vw,5.4rem)] font-extrabold leading-[0.98]">
-          Comece a configurar sua <span className="text-[#1CC88A]">secretaria IA</span>.
+          Comece a configurar sua <span className="text-[#1CC88A]">secretária IA</span>.
         </h1>
         <p className="mt-6 max-w-2xl text-lg font-medium leading-8 text-white/76">
-          Em poucos passos, a Prontofy entende seu consultorio, formas de pagamento e estilo de atendimento para preparar uma IA pronta para falar com seus pacientes.
+          Em poucos passos, a Prontofy entende seu consultório, formas de pagamento e estilo de atendimento para preparar uma IA pronta para falar com seus pacientes.
         </p>
         <button
           type="button"
           onClick={onStart}
           className="mt-10 inline-flex items-center justify-center gap-3 rounded-xl bg-[#1CC88A] px-8 py-4 text-base font-extrabold uppercase tracking-wide text-[#06131f] shadow-[0_18px_52px_rgba(28,200,138,0.34)] transition hover:bg-[#35df91]"
         >
-          Iniciar configuracao
+          Iniciar configuração
           <ArrowRight className="h-5 w-5" />
         </button>
       </div>
@@ -425,10 +434,10 @@ const SuccessScreen = ({ clinicName }: { clinicName: string }) => (
           <Check className="h-14 w-14 stroke-[3]" />
         </div>
         <h1 className="mt-8 text-[clamp(2rem,6vw,3.5rem)] font-extrabold leading-tight text-[#0b2339]">
-          Configuracao concluida com sucesso!
+          Configuração concluída com sucesso!
         </h1>
         <div className="mx-auto mt-6 rounded-2xl border border-[#1CC88A]/28 bg-[#1CC88A]/10 p-6 text-lg font-medium leading-8 text-[#07583a]">
-          Parabens{clinicName ? `, ${clinicName}` : ""}. Em breve nossa equipe pode revisar os dados e ajudar voce a ativar a sua Secretaria IA.
+          Parabéns{clinicName ? `, ${clinicName}` : ""}. Em breve nossa equipe pode revisar os dados e ajudar você a ativar a sua Secretária IA.
         </div>
         <a
           href={WHATSAPP_URL}
@@ -447,12 +456,14 @@ const SuccessScreen = ({ clinicName }: { clinicName: string }) => (
 const ClinicStep = ({ form, update, toggleArray, invalidFields }: StepProps) => (
   <div className="grid gap-5">
     <div className="grid gap-4 sm:grid-cols-2">
-      <Input icon={Building2} label="Nome da clinica ou consultorio" value={form.nomeClinica} onChange={(value) => update("nomeClinica", value)} hasError={invalidFields.has("nomeClinica")} />
+      <Input icon={Building2} label="Nome da clínica ou consultório" value={form.nomeClinica} onChange={(value) => update("nomeClinica", value)} hasError={invalidFields.has("nomeClinica")} />
       <ChoiceGroup label="Tipo de estabelecimento" options={ESTABELECIMENTOS} value={form.tipoEstabelecimento} onChange={(value) => update("tipoEstabelecimento", value)} />
-      <Input icon={MapPin} label="Endereco completo" value={form.endereco} onChange={(value) => update("endereco", value)} hasError={invalidFields.has("endereco")} />
-      <Input icon={MapPin} label="Link do Google Maps" value={form.googleMaps} onChange={(value) => update("googleMaps", value)} hasError={invalidFields.has("googleMaps")} />
     </div>
-    <Input icon={MapPin} label="Referencia/localizacao" value={form.referencia} onChange={(value) => update("referencia", value)} />
+    <Input icon={MapPin} label="Endereço completo" value={form.endereco} onChange={(value) => update("endereco", value)} hasError={invalidFields.has("endereco")} />
+    <div className="grid gap-4 sm:grid-cols-2">
+      <Input icon={MapPin} label="Link do Google Maps" value={form.googleMaps} onChange={(value) => update("googleMaps", value)} hasError={invalidFields.has("googleMaps")} />
+      <Input icon={MapPin} label="Referência/localização" value={form.referencia} onChange={(value) => update("referencia", value)} />
+    </div>
     <MultiChips label="Dias de funcionamento" options={DIAS} selected={form.diasFuncionamento} onToggle={(value) => toggleArray("diasFuncionamento", value)} />
     <div className="grid gap-4 sm:grid-cols-2">
       <Input icon={Clock3} label="Abre as" type="time" value={form.horaInicio} onChange={(value) => update("horaInicio", value)} />
@@ -463,7 +474,7 @@ const ClinicStep = ({ form, update, toggleArray, invalidFields }: StepProps) => 
 
 const AgendaStep = ({ form, update, toggleArray }: StepProps) => (
   <div className="grid gap-5">
-    <Textarea label="Nome do medico ou medicos que atuam na clinica" value={form.medicos} onChange={(value) => update("medicos", value)} />
+    <Textarea label="Nome do médico ou médicos que atuam na clínica" value={form.medicos} onChange={(value) => update("medicos", value)} />
     <MultiChips label="Especialidades" options={ESPECIALIDADES} selected={form.especialidades} onToggle={(value) => toggleArray("especialidades", value)} />
     <Textarea label="Dias e horarios de atendimento de cada profissional" value={form.horariosProfissionais} onChange={(value) => update("horariosProfissionais", value)} />
     <div className="grid gap-4 sm:grid-cols-3">
@@ -472,7 +483,7 @@ const AgendaStep = ({ form, update, toggleArray }: StepProps) => (
       <SelectPill label="Intervalo" value={form.intervaloAtendimentos} options={["Sem intervalo", "5 min", "10 min", "15 min", "20 min"]} onChange={(value) => update("intervaloAtendimentos", value)} />
     </div>
     <div className="grid gap-4 sm:grid-cols-[0.7fr_1.3fr]">
-      <ChoiceGroup label="Permite encaixe?" options={["Sim", "Nao"]} value={form.permiteEncaixe} onChange={(value) => update("permiteEncaixe", value)} />
+      <ChoiceGroup label="Permite encaixe?" options={["Sim", "Não"]} value={form.permiteEncaixe} onChange={(value) => update("permiteEncaixe", value)} />
       <Input label="Regras para encaixe" value={form.regrasEncaixe} onChange={(value) => update("regrasEncaixe", value)} />
     </div>
   </div>
@@ -484,8 +495,7 @@ const FinanceStep = ({ form, update, toggleArray, invalidFields }: StepProps) =>
     <MultiChips label="Formas de pagamento aceitas" options={PAGAMENTOS} selected={form.formasPagamento} onToggle={(value) => toggleArray("formasPagamento", value)} />
     <Textarea label="Convenios aceitos" value={form.convenios} onChange={(value) => update("convenios", value)} />
     <div className="grid gap-4 sm:grid-cols-2">
-      <ChoiceGroup label="Pode cobrar sinal/adiantamento?" options={["Sim", "Nao"]} value={form.permiteEncaixe} onChange={(value) => update("permiteEncaixe", value)} />
-      <Textarea label="Regras financeiras para a IA explicar ao paciente" value={form.regrasEncaixe} onChange={(value) => update("regrasEncaixe", value)} />
+      <ChoiceGroup label="Pode cobrar sinal/adiantamento?" options={["Sim", "Não"]} value={form.permiteEncaixe} onChange={(value) => update("permiteEncaixe", value)} />
     </div>
   </div>
 );
@@ -495,26 +505,25 @@ const ServiceStyleStep = ({ form, update }: StepProps) => (
     <ChoiceGroup label="Estilo de atendimento desejado" options={TONS} value={form.tomComunicacao} onChange={(value) => update("tomComunicacao", value)} />
     <DefaultOrCustomText
       label="Mensagem de boas-vindas"
-      defaultLabel="Mensagem padrao"
+      defaultLabel="Mensagem padrão"
       customLabel="Mensagem personalizada"
       defaultValue={getDefaultWelcomeMessage(form.nomeClinica)}
       value={form.boasVindas}
       onChange={(value) => update("boasVindas", value)}
     />
+    <div className="grid gap-4 sm:grid-cols-3">
+      <ChoiceGroup label="Pode remarcar?" options={["Sim", "Não"]} value={form.podeRemarcar} onChange={(value) => update("podeRemarcar", value)} />
+      <ChoiceGroup label="Pode cancelar?" options={["Sim", "Não"]} value={form.podeCancelar} onChange={(value) => update("podeCancelar", value)} />
+      <SelectPill label="Tempo máximo de resposta" value={form.tempoResposta} options={["Até 1 minuto", "Até 2 minutos", "Até 5 minutos", "Até 10 minutos"]} onChange={(value) => update("tempoResposta", value)} />
+    </div>
     <DefaultOrCustomText
       label="Perguntas iniciais ao paciente"
-      defaultLabel="Perguntas padrao"
+      defaultLabel="Perguntas padrão"
       customLabel="Perguntas personalizadas"
       defaultValue={DEFAULT_PATIENT_QUESTIONS}
       value={form.perguntasIniciais}
       onChange={(value) => update("perguntasIniciais", value)}
     />
-    <div className="grid gap-4 sm:grid-cols-3">
-      <ChoiceGroup label="Pode remarcar?" options={["Sim", "Nao"]} value={form.podeRemarcar} onChange={(value) => update("podeRemarcar", value)} />
-      <ChoiceGroup label="Pode cancelar?" options={["Sim", "Nao"]} value={form.podeCancelar} onChange={(value) => update("podeCancelar", value)} />
-      <SelectPill label="Tempo maximo de resposta" value={form.tempoResposta} options={["Ate 1 minuto", "Ate 2 minutos", "Ate 5 minutos", "Ate 10 minutes"]} onChange={(value) => update("tempoResposta", value)} />
-    </div>
-    <Textarea label="Observacoes e limites do atendimento" value={form.observacoesComunicacao} onChange={(value) => update("observacoesComunicacao", value)} />
   </div>
 );
 
@@ -523,10 +532,10 @@ const CommunicationStep = ({ form, update }: StepProps) => (
     <ChoiceGroup label="Tom de linguagem desejado" options={TONS} value={form.tomComunicacao} onChange={(value) => update("tomComunicacao", value)} />
     <Textarea label="Mensagem de boas-vindas" value={form.boasVindas} onChange={(value) => update("boasVindas", value)} />
     <div className="grid gap-4 sm:grid-cols-2">
-      <Textarea label="Modelo de confirmacao de consulta" value={form.confirmacaoConsulta} onChange={(value) => update("confirmacaoConsulta", value)} />
+      <Textarea label="Modelo de confirmação de consulta" value={form.confirmacaoConsulta} onChange={(value) => update("confirmacaoConsulta", value)} />
       <Textarea label="Modelo de lembrete de consulta" value={form.lembreteConsulta} onChange={(value) => update("lembreteConsulta", value)} />
     </div>
-    <Textarea label="Observacoes sobre a comunicacao com pacientes" value={form.observacoesComunicacao} onChange={(value) => update("observacoesComunicacao", value)} />
+    <Textarea label="Observações sobre a comunicação com pacientes" value={form.observacoesComunicacao} onChange={(value) => update("observacoesComunicacao", value)} />
   </div>
 );
 
@@ -535,12 +544,12 @@ const RulesStep = ({ form, update }: StepProps) => (
     <Textarea label="Perguntas iniciais" value={form.perguntasIniciais} onChange={(value) => update("perguntasIniciais", value)} />
     <div className="grid gap-4 sm:grid-cols-2">
       <Textarea label="Direcionamento por especialidade" value={form.direcionamentoEspecialidade} onChange={(value) => update("direcionamentoEspecialidade", value)} />
-      <Textarea label="Regras para identificacao de urgencia" value={form.regrasUrgencia} onChange={(value) => update("regrasUrgencia", value)} />
+      <Textarea label="Regras para identificação de urgência" value={form.regrasUrgencia} onChange={(value) => update("regrasUrgencia", value)} />
     </div>
     <div className="grid gap-4 sm:grid-cols-3">
-      <ChoiceGroup label="Pode remarcar?" options={["Sim", "Nao"]} value={form.podeRemarcar} onChange={(value) => update("podeRemarcar", value)} />
-      <ChoiceGroup label="Pode cancelar?" options={["Sim", "Nao"]} value={form.podeCancelar} onChange={(value) => update("podeCancelar", value)} />
-      <SelectPill label="Tempo maximo de resposta" value={form.tempoResposta} options={["Ate 1 minuto", "Ate 2 minutos", "Ate 5 minutos", "Ate 10 minutos"]} onChange={(value) => update("tempoResposta", value)} />
+      <ChoiceGroup label="Pode remarcar?" options={["Sim", "Não"]} value={form.podeRemarcar} onChange={(value) => update("podeRemarcar", value)} />
+      <ChoiceGroup label="Pode cancelar?" options={["Sim", "Não"]} value={form.podeCancelar} onChange={(value) => update("podeCancelar", value)} />
+      <SelectPill label="Tempo máximo de resposta" value={form.tempoResposta} options={["Até 1 minuto", "Até 2 minutos", "Até 5 minutos", "Até 10 minutos"]} onChange={(value) => update("tempoResposta", value)} />
     </div>
     <Input label="Link do Google Maps" value={form.googleMaps} onChange={(value) => update("googleMaps", value)} />
     <Textarea label="Outras funcionalidades desejadas" value={form.funcionalidadesExtras} onChange={(value) => update("funcionalidadesExtras", value)} />
@@ -551,16 +560,16 @@ const ReviewStep = ({ form, update }: { form: FormData; update: (field: keyof Fo
   <div className="grid gap-5">
     <div className="rounded-2xl border border-[#1CC88A]/24 bg-[#1CC88A]/10 p-5">
       <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#86f3c8]">Resumo</p>
-      <h4 className="mt-2 text-2xl font-extrabold">{form.nomeClinica || "Clinica ainda sem nome"}</h4>
+      <h4 className="mt-2 text-2xl font-extrabold">{form.nomeClinica || "Clínica ainda sem nome"}</h4>
       <p className="mt-2 text-white/68">
         {form.tipoEstabelecimento} com funcionamento de {form.horaInicio} as {form.horaFim}, tom {form.tomComunicacao.toLowerCase()} e resposta {form.tempoResposta.toLowerCase()}.
       </p>
     </div>
     <div className="grid gap-4 sm:grid-cols-2">
       <Input label="CNPJ (opcional)" value={form.cnpj} onChange={(value) => update("cnpj", value)} />
-      <Input label="Responsavel" value={form.nomeClinica} onChange={() => undefined} readOnly />
+      <Input label="Responsável" value={form.nomeClinica} onChange={() => undefined} readOnly />
     </div>
-    <Textarea label="Observacoes adicionais" value={form.observacoesAdicionais} onChange={(value) => update("observacoesAdicionais", value)} />
+    <Textarea label="Observações adicionais" value={form.observacoesAdicionais} onChange={(value) => update("observacoesAdicionais", value)} />
   </div>
 );
 
@@ -780,7 +789,7 @@ const isStepComplete = (stepIndex: number, form: FormData, touchedFields: Set<ke
 
 const getDefaultWelcomeMessage = (clinicName: string) => {
   const normalizedClinicName = clinicName.trim();
-  return normalizedClinicName ? `Ola, aqui e a secretaria virtual da ${normalizedClinicName}.` : DEFAULT_WELCOME_MESSAGE;
+  return normalizedClinicName ? `Olá, aqui é a secretária virtual da ${normalizedClinicName}.` : DEFAULT_WELCOME_MESSAGE;
 };
 
 const isDefaultWelcomeMessage = (message: string, clinicName: string) =>
