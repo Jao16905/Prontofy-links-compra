@@ -1,14 +1,16 @@
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
   Bot,
   Building2,
   Check,
+  ChevronDown,
   Clock3,
   CreditCard,
   MapPin,
   MessageCircle,
+  Phone,
   Sparkles,
 } from "lucide-react";
 import ProntofyLogo from "@/components/ProntofyLogo";
@@ -18,12 +20,9 @@ const ESTABELECIMENTOS = ["Consultório individual", "Clínica", "Coworking"];
 const TONS = ["Acolhedor", "Formal", "Premium", "Descontraído", "Técnico"];
 const PAGAMENTOS = ["Pix", "Cartão", "Dinheiro", "Boleto", "Transferência"];
 const ESPECIALIDADES = ["Clínica médica", "Cardiologia", "Dermatologia", "Pediatria", "Psiquiatria", "Ortopedia", "Outra"];
-const TIME_OPTIONS = Array.from({ length: 48 }, (_, index) => {
-  const hours = String(Math.floor(index / 2)).padStart(2, "0");
-  const minutes = index % 2 === 0 ? "00" : "30";
-  return `${hours}:${minutes}`;
-});
-const DEFAULT_WELCOME_MESSAGE = "Olá, aqui é a secretária virtual da clínica X.";
+const HOURS = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, "0"));
+const MINUTES = Array.from({ length: 60 }, (_, minute) => String(minute).padStart(2, "0"));
+const DEFAULT_WELCOME_MESSAGE = "Olá, aqui é a secretária virtual da (nome da sua unidade de saúde).";
 const DEFAULT_PATIENT_QUESTIONS = "Nome, idade, motivo da consulta e queixa principal.";
 const WHATSAPP_URL = "https://wa.me/message/YO6R73FVJZHTC1";
 const N8N_WEBHOOK_URL = "https://teste-n8n-editor.6esqeg.easypanel.host/webhook-test/sec-de-ia";
@@ -33,6 +32,8 @@ type FlowStep = "inicio" | "formulario" | "sucesso";
 
 type FormData = {
   nomeClinica: string;
+  numeroContato: string;
+  emailPessoal: string;
   tipoEstabelecimento: string;
   endereco: string;
   referencia: string;
@@ -69,6 +70,8 @@ type FormData = {
 
 const initialData: FormData = {
   nomeClinica: "",
+  numeroContato: "",
+  emailPessoal: "",
   tipoEstabelecimento: "Clínica",
   endereco: "",
   referencia: "",
@@ -104,7 +107,7 @@ const initialData: FormData = {
 };
 
 const stepMeta = [
-  { title: "Consultório", icon: Building2, fields: ["nomeClinica", "tipoEstabelecimento", "endereco", "googleMaps", "diasFuncionamento", "horaInicio", "horaFim"] },
+  { title: "Consultório", icon: Building2, fields: ["nomeClinica", "numeroContato", "emailPessoal", "tipoEstabelecimento", "endereco", "googleMaps", "diasFuncionamento", "horaInicio", "horaFim"] },
   { title: "Pagamentos", icon: CreditCard, fields: ["valoresConsultas", "formasPagamento", "convenios"] },
   { title: "Atendimento IA", icon: Bot, fields: ["tomComunicacao", "boasVindas", "perguntasIniciais", "podeRemarcar", "podeCancelar", "tempoResposta"] },
 ] as const;
@@ -160,15 +163,11 @@ const ConfiguracaoSecretariaIA = () => {
     event.preventDefault();
     setSubmitError("");
 
-    if (currentStep < stepMeta.length - 1) {
-      goToNextStep();
-      return;
-    }
+    if (currentStep < stepMeta.length - 1) return;
 
     const firstInvalidStep = getFirstInvalidStep(form);
     if (firstInvalidStep) {
       setCurrentStep(firstInvalidStep.index);
-      setSubmitError(firstInvalidStep.message);
       setInvalidFields(new Set(firstInvalidStep.fields));
       scrollToQuestionsStart();
       return;
@@ -178,30 +177,7 @@ const ConfiguracaoSecretariaIA = () => {
     setIsSubmitting(true);
 
     try {
-      const payload = {
-        nomeClinica: form.nomeClinica,
-        tipoEstabelecimento: form.tipoEstabelecimento,
-        endereco: form.endereco,
-        googleMaps: form.googleMaps,
-        referencia: form.referencia,
-        diasFuncionamento: form.diasFuncionamento,
-        horaInicio: form.horaInicio,
-        horaFim: form.horaFim,
-        valoresConsultas: form.valoresConsultas,
-        formasPagamento: form.formasPagamento.join(", "),
-        convenios: form.convenios,
-        cobrarSinalAdiantamento: form.permiteEncaixe,
-        atendimentoIA: {
-          tomComunicacao: form.tomComunicacao || initialData.tomComunicacao,
-          boasVindas: form.boasVindas || getDefaultWelcomeMessage(form.nomeClinica),
-          perguntasIniciais: form.perguntasIniciais || DEFAULT_PATIENT_QUESTIONS,
-          podeRemarcar: form.podeRemarcar || initialData.podeRemarcar,
-          podeCancelar: form.podeCancelar || initialData.podeCancelar,
-          tempoResposta: form.tempoResposta || initialData.tempoResposta,
-        },
-        data_envio: new Date().toISOString(),
-        origem: "configuracao-secretaria-ia",
-      };
+      const payload = buildOrderedPayload(form);
 
       const response = await fetch(N8N_WEBHOOK_URL, {
         method: "POST",
@@ -249,7 +225,6 @@ const ConfiguracaoSecretariaIA = () => {
   const goToNextStep = () => {
     const currentStepValidation = validateStep(currentStep, form);
     if (!currentStepValidation.isValid) {
-      setSubmitError(currentStepValidation.message);
       setInvalidFields(new Set(currentStepValidation.fields));
       scrollToQuestionsStart();
       return;
@@ -479,8 +454,10 @@ const ClinicStep = ({ form, update, toggleArray, invalidFields }: StepProps) => 
   <div className="grid gap-5">
     <div className="grid gap-4 sm:grid-cols-2">
       <Input icon={Building2} label="Nome da clínica ou consultório" value={form.nomeClinica} onChange={(value) => update("nomeClinica", value)} hasError={invalidFields.has("nomeClinica")} />
-      <ChoiceGroup label="Tipo de estabelecimento" options={ESTABELECIMENTOS} value={form.tipoEstabelecimento} onChange={(value) => update("tipoEstabelecimento", value)} />
+      <Input icon={Phone} label="Número para contato" value={form.numeroContato} onChange={(value) => update("numeroContato", value)} />
+      <Input label="Melhor e-mail pessoal" value={form.emailPessoal} onChange={(value) => update("emailPessoal", value)} type="email" />
     </div>
+    <ChoiceGroup label="Tipo de estabelecimento" options={ESTABELECIMENTOS} value={form.tipoEstabelecimento} onChange={(value) => update("tipoEstabelecimento", value)} />
     <Input icon={MapPin} label="Endereço completo" value={form.endereco} onChange={(value) => update("endereco", value)} hasError={invalidFields.has("endereco")} />
     <div className="grid gap-4 sm:grid-cols-2">
       <Input icon={MapPin} label="Link do Google Maps" value={form.googleMaps} onChange={(value) => update("googleMaps", value)} hasError={invalidFields.has("googleMaps")} />
@@ -653,35 +630,230 @@ const Textarea = ({ label, value, onChange, readOnly, hasError }: Omit<FieldProp
   </label>
 );
 
-const TimePicker = ({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) => (
-  <div>
-    <p className="mb-2 block text-sm font-bold text-white/78">{label}</p>
-    <div className="grid gap-2 rounded-2xl border border-white/10 bg-white/[0.055] p-2 sm:grid-cols-[1fr_0.95fr]">
-      <label className="flex items-center rounded-xl bg-[#111820]/72 px-3">
-        <Clock3 className="mr-3 h-4 w-4 text-white/38" />
-        <select
+const TimePicker = ({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedHour = "00", selectedMinute = "00"] = value.split(":");
+
+  const updateTime = (hour: string, minute: string) => {
+    onChange(`${hour}:${minute}`);
+  };
+
+  return (
+    <div className="relative">
+      <p className="mb-2 block text-sm font-bold text-white/78">{label}</p>
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => setIsOpen((open) => !open)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setIsOpen((open) => !open);
+          }
+        }}
+        className="flex min-h-14 w-full cursor-pointer items-center rounded-2xl border border-[#1CC88A]/24 bg-[#0b2339]/42 px-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.055),0_14px_34px_rgba(0,0,0,0.18)] backdrop-blur-xl transition hover:border-[#1CC88A]/48 focus:border-[#1CC88A]/70 focus:outline-none"
+        aria-expanded={isOpen}
+        aria-label={`${label}: abrir seletor de horario`}
+      >
+        <Clock3 className="mr-3 h-4 w-4 text-white/42" />
+        <input
+          type="text"
           value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="min-h-11 w-full bg-transparent text-sm font-extrabold text-white outline-none"
+          readOnly
+          className="pointer-events-none min-h-12 flex-1 cursor-pointer bg-transparent text-sm font-extrabold text-white outline-none"
+          aria-label={`${label}: horario selecionado`}
+        />
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            setIsOpen((open) => !open);
+          }}
+          className="-mr-1 grid h-10 w-10 place-items-center rounded-xl text-white/58 transition hover:bg-white/5 hover:text-white focus:outline-none"
+          aria-expanded={isOpen}
           aria-label={`${label}: selecionar horário`}
         >
-          {TIME_OPTIONS.map((time) => (
-            <option key={time} value={time}>
-              {time}
-            </option>
-          ))}
-        </select>
-      </label>
-      <input
-        type="time"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="min-h-11 rounded-xl border border-white/10 bg-[#111820]/72 px-3 text-sm font-extrabold text-white outline-none transition focus:border-[#1CC88A]/70"
-        aria-label={`${label}: digitar horário`}
-      />
+          <ChevronDown className={`h-4 w-4 transition ${isOpen ? "rotate-180" : ""}`} />
+        </button>
+      </div>
+
+      {isOpen && (
+        <div className="mt-3 rounded-[1.7rem] border border-[#1CC88A]/16 bg-[#0b2339]/54 p-4 shadow-[0_24px_62px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.055)] backdrop-blur-2xl">
+          <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3 overflow-hidden rounded-[1.35rem] border border-[#1CC88A]/10 bg-[#06131f]/36 px-3 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)] backdrop-blur-xl">
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0b2339]/84 via-transparent to-[#0b2339]/84" />
+            <div className="pointer-events-none absolute left-3 right-3 top-1/2 h-12 -translate-y-1/2 rounded-2xl border border-[#1CC88A]/16 bg-[#1CC88A]/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)]" />
+            <TimeWheel
+              ariaLabel={`${label}: hora`}
+              options={HOURS}
+              value={selectedHour}
+              onChange={(hour) => updateTime(hour, selectedMinute)}
+            />
+            <span className="relative z-10 text-2xl font-black text-[#1CC88A]">:</span>
+            <TimeWheel
+              ariaLabel={`${label}: minuto`}
+              options={MINUTES}
+              value={selectedMinute}
+              onChange={(minute) => updateTime(selectedHour, minute)}
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            className="mt-4 min-h-11 w-full rounded-2xl bg-[#1CC88A] px-4 text-sm font-black text-[#06131f] transition hover:bg-[#31e0a2]"
+          >
+            Confirmar horário
+          </button>
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
+
+const TimeWheel = ({
+  ariaLabel,
+  options,
+  value,
+  onChange,
+}: {
+  ariaLabel: string;
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+}) => {
+  const [illuminatedValue, setIlluminatedValue] = useState(value);
+  const [rollingDirection, setRollingDirection] = useState<"up" | "down" | "">("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [draftValue, setDraftValue] = useState(value);
+  const editInputRef = useRef<HTMLInputElement>(null);
+  const selectedIndex = Math.max(0, options.indexOf(value));
+  const visibleOptions = [-2, -1, 0, 1, 2].map((offset) => {
+    const optionIndex = (selectedIndex + offset + options.length) % options.length;
+    return { offset, value: options[optionIndex] };
+  });
+
+  const commitDraftValue = () => {
+    const parsedValue = Number.parseInt(draftValue, 10);
+    const safeValue = Number.isNaN(parsedValue) ? Number.parseInt(value, 10) : Math.min(Math.max(parsedValue, 0), options.length - 1);
+    const nextValue = String(safeValue).padStart(2, "0");
+    const nextIndex = options.indexOf(nextValue);
+
+    setIsEditing(false);
+    setDraftValue(nextValue);
+    setIlluminatedValue("");
+    if (nextIndex !== selectedIndex) {
+      setRollingDirection(nextIndex > selectedIndex ? "up" : "down");
+    }
+    onChange(nextValue);
+  };
+
+  useEffect(() => {
+    const illuminateTimer = window.setTimeout(() => {
+      setIlluminatedValue(value);
+      setRollingDirection("");
+    }, 280);
+
+    return () => window.clearTimeout(illuminateTimer);
+  }, [value]);
+
+  useEffect(() => {
+    if (!isEditing) {
+      setDraftValue(value);
+      return;
+    }
+
+    editInputRef.current?.focus();
+    editInputRef.current?.select();
+  }, [isEditing, value]);
+
+  return (
+    <div
+      className="relative z-10 h-48 overflow-hidden pr-1 [mask-image:linear-gradient(to_bottom,transparent_0%,black_22%,black_78%,transparent_100%)]"
+      aria-label={ariaLabel}
+    >
+      <style>{`
+        @keyframes timeWheelRollUp {
+          0% { transform: translateY(28px); opacity: .68; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes timeWheelRollDown {
+          0% { transform: translateY(-28px); opacity: .68; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+      `}</style>
+      <div
+        className={`grid h-full grid-rows-5 items-center ${
+          rollingDirection === "up"
+            ? "animate-[timeWheelRollUp_280ms_ease-out]"
+            : rollingDirection === "down"
+              ? "animate-[timeWheelRollDown_280ms_ease-out]"
+              : ""
+        }`}
+      >
+        {visibleOptions.map((option) => {
+          const isSelected = option.offset === 0;
+          const isIlluminated = option.value === illuminatedValue && isSelected;
+
+          if (isSelected && isEditing) {
+            return (
+              <div key={`${option.value}-${option.offset}`} className="relative z-20 grid h-10 w-full place-items-center">
+                <input
+                  ref={editInputRef}
+                  type="text"
+                  inputMode="numeric"
+                  value={draftValue}
+                  maxLength={2}
+                  onChange={(event) => setDraftValue(event.target.value.replace(/\D/g, "").slice(0, 2))}
+                  onBlur={commitDraftValue}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      commitDraftValue();
+                    }
+                    if (event.key === "Escape") {
+                      event.preventDefault();
+                      setDraftValue(value);
+                      setIsEditing(false);
+                    }
+                  }}
+                  aria-label={`${ariaLabel}: editar valor selecionado`}
+                  className="h-9 w-14 border-0 bg-transparent text-center text-2xl font-black text-[#1CC88A] caret-[#1CC88A] outline-none drop-shadow-[0_0_14px_rgba(28,200,138,0.42)] selection:bg-transparent selection:text-[#1CC88A]"
+                />
+              </div>
+            );
+          }
+
+          return (
+            <button
+              key={`${option.value}-${option.offset}`}
+              type="button"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => {
+                if (isSelected) {
+                  setDraftValue(option.value);
+                  setIsEditing(true);
+                  return;
+                }
+                setRollingDirection(option.offset > 0 ? "up" : "down");
+                setIlluminatedValue("");
+                onChange(option.value);
+              }}
+              className={`relative z-20 grid h-10 w-full appearance-none place-items-center rounded-xl border-0 bg-transparent text-center font-black outline-none transition-all duration-300 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0 ${
+                isIlluminated
+                  ? "scale-110 text-2xl text-[#1CC88A] drop-shadow-[0_0_14px_rgba(28,200,138,0.42)]"
+                  : isSelected
+                    ? "text-xl text-white/42"
+                    : "text-lg text-white/20 hover:text-white/58"
+              }`}
+            >
+              {option.value}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const DefaultOrCustomText = ({
   label,
@@ -811,6 +983,47 @@ const SelectPill = ({ label, value, options, onChange }: { label: string; value:
   </label>
 );
 
+const buildOrderedPayload = (form: FormData) => ({
+  nomeClinica: form.nomeClinica,
+  numeroContato: form.numeroContato,
+  emailPessoal: form.emailPessoal,
+  tipoEstabelecimento: form.tipoEstabelecimento,
+  endereco: form.endereco,
+  googleMaps: form.googleMaps,
+  referencia: form.referencia,
+  diasFuncionamento: form.diasFuncionamento,
+  horaInicio: form.horaInicio,
+  horaFim: form.horaFim,
+  valoresConsultas: form.valoresConsultas,
+  formasPagamento: form.formasPagamento,
+  convenios: form.convenios,
+  cobrarSinalAdiantamento: form.permiteEncaixe,
+  tomComunicacao: form.tomComunicacao || initialData.tomComunicacao,
+  boasVindas: form.boasVindas || getDefaultWelcomeMessage(form.nomeClinica),
+  perguntasIniciais: form.perguntasIniciais || DEFAULT_PATIENT_QUESTIONS,
+  podeRemarcar: form.podeRemarcar || initialData.podeRemarcar,
+  podeCancelar: form.podeCancelar || initialData.podeCancelar,
+  tempoResposta: form.tempoResposta || initialData.tempoResposta,
+  medicos: form.medicos,
+  especialidades: form.especialidades,
+  horariosProfissionais: form.horariosProfissionais,
+  tiposConsulta: form.tiposConsulta,
+  duracaoConsulta: form.duracaoConsulta,
+  intervaloAtendimentos: form.intervaloAtendimentos,
+  permiteEncaixe: form.permiteEncaixe,
+  regrasEncaixe: form.regrasEncaixe,
+  confirmacaoConsulta: form.confirmacaoConsulta,
+  lembreteConsulta: form.lembreteConsulta,
+  observacoesComunicacao: form.observacoesComunicacao,
+  direcionamentoEspecialidade: form.direcionamentoEspecialidade,
+  regrasUrgencia: form.regrasUrgencia,
+  funcionalidadesExtras: form.funcionalidadesExtras,
+  cnpj: form.cnpj,
+  observacoesAdicionais: form.observacoesAdicionais,
+  data_envio: new Date().toISOString(),
+  origem: "configuracao-secretaria-ia",
+});
+
 const isFilled = (value: string | string[]) => (Array.isArray(value) ? value.length > 0 : value.trim().length > 0);
 
 const validateStep = (stepIndex: number, form: FormData) => {
@@ -860,7 +1073,7 @@ const isStepComplete = (stepIndex: number, form: FormData, touchedFields: Set<ke
 
 const getDefaultWelcomeMessage = (clinicName: string) => {
   const normalizedClinicName = clinicName.trim();
-  return normalizedClinicName ? `Olá, aqui é a secretária virtual da ${normalizedClinicName}.` : DEFAULT_WELCOME_MESSAGE;
+  return normalizedClinicName ? `Olá, aqui é a secretária virtual da clínica/consultório ${normalizedClinicName}.` : DEFAULT_WELCOME_MESSAGE;
 };
 
 const isDefaultWelcomeMessage = (message: string, clinicName: string) =>
