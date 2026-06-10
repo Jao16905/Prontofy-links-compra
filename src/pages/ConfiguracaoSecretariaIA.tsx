@@ -1,13 +1,16 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { z } from "zod";
 import {
   ArrowLeft,
   ArrowRight,
+  Mail,
   Bot,
   Building2,
   Check,
   ChevronDown,
   Clock3,
   CreditCard,
+  Link,
   MapPin,
   MessageCircle,
   Phone,
@@ -127,6 +130,7 @@ const ConfiguracaoSecretariaIA = () => {
   const [invalidFields, setInvalidFields] = useState<Set<keyof FormData>>(() => new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [validationError, setValidationError] = useState("");
   const [progress, setProgress] = useState(0);
   const formStartRef = useRef<HTMLFormElement>(null);
   const StepIcon = stepMeta[currentStep].icon;
@@ -134,6 +138,7 @@ const ConfiguracaoSecretariaIA = () => {
   const update = (field: keyof FormData, value: string | string[]) => {
     setTouchedFields((previous) => new Set(previous).add(field));
     setSubmitError("");
+    setValidationError("");
     setInvalidFields((previous) => {
       const next = new Set(previous);
       if (isFilled(value)) {
@@ -162,6 +167,7 @@ const ConfiguracaoSecretariaIA = () => {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setSubmitError("");
+    setValidationError("");
 
     if (currentStep < stepMeta.length - 1) return;
 
@@ -169,6 +175,7 @@ const ConfiguracaoSecretariaIA = () => {
     if (firstInvalidStep) {
       setCurrentStep(firstInvalidStep.index);
       setInvalidFields(new Set(firstInvalidStep.fields));
+      setValidationError(firstInvalidStep.message);
       scrollToQuestionsStart();
       return;
     }
@@ -214,6 +221,7 @@ const ConfiguracaoSecretariaIA = () => {
 
   const goToStep = (step: number, shouldScroll = true) => {
     setSubmitError("");
+    setValidationError("");
     setInvalidFields(new Set());
     const nextStep = Math.max(0, Math.min(stepMeta.length - 1, step));
     setCurrentStep(nextStep);
@@ -226,11 +234,13 @@ const ConfiguracaoSecretariaIA = () => {
     const currentStepValidation = validateStep(currentStep, form);
     if (!currentStepValidation.isValid) {
       setInvalidFields(new Set(currentStepValidation.fields));
+      setValidationError(currentStepValidation.message);
       scrollToQuestionsStart();
       return;
     }
 
     setSubmitError("");
+    setValidationError("");
     setInvalidFields(new Set());
     if (currentStep === 0) {
       setProgress((currentProgress) => Math.max(currentProgress, 40));
@@ -271,100 +281,107 @@ const ConfiguracaoSecretariaIA = () => {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.028)_1px,transparent_1px)] bg-[size:72px_72px] opacity-35" />
 
         <div className="relative mx-auto flex min-h-[calc(100vh-80px)] max-w-7xl flex-col justify-center">
-          <form ref={formStartRef} onSubmit={handleSubmit} className="mx-auto w-full max-w-5xl rounded-[2rem] border border-white/12 bg-[#111820]/88 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.38)] backdrop-blur-xl sm:p-6 lg:p-8">
-              <div className="border-b border-white/10 pb-5">
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#1CC88A]">Checklist de configuração</p>
-                <h2 className="mt-2 text-2xl font-extrabold">Dados da Secretária IA</h2>
+          <form ref={formStartRef} onSubmit={handleSubmit} className="mx-auto w-full max-w-5xl rounded-[2rem] border border-white/12 bg-[#111820]/88 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.38)] backdrop-blur-xl sm:p-6 lg:p-8 min-w-0">
+            <div className="border-b border-white/10 pb-5">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#1CC88A]">Checklist de configuração</p>
+              <h2 className="mt-2 text-2xl font-extrabold">Dados da Secretária IA</h2>
+            </div>
+
+            <div className="mt-5">
+              <div className="flex items-center justify-between text-xs font-bold text-white/58">
+                <span>Progresso</span>
+                <span>{progress}%</span>
               </div>
-
-              <div className="mt-5">
-                <div className="flex items-center justify-between text-xs font-bold text-white/58">
-                  <span>Progresso</span>
-                  <span>{progress}%</span>
-                </div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full rounded-full bg-[#1CC88A] transition-all duration-500" style={{ width: `${progress}%` }} />
-                </div>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
+                <div className="h-full rounded-full bg-[#1CC88A] transition-all duration-500" style={{ width: `${progress}%` }} />
               </div>
+            </div>
 
-              <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
-                {stepMeta.map((step, index) => {
-                  const Icon = step.icon;
-                  const isActive = currentStep === index;
-                  const isDone = isStepComplete(index, form, touchedFields);
-                  return (
-                    <button
-                      key={step.title}
-                      type="button"
-                      onClick={() => goToStep(index)}
-                      className={`flex min-h-16 items-center justify-center gap-1.5 rounded-2xl border px-2 text-center text-[0.68rem] font-extrabold transition sm:gap-2 sm:px-3 sm:text-xs ${
-                        isActive
-                          ? "border-[#1CC88A] bg-[#1CC88A] text-[#06131f]"
-                          : isDone
-                            ? "border-[#1CC88A]/35 bg-[#1CC88A]/10 text-[#86f3c8]"
-                            : "border-white/10 bg-white/[0.045] text-white/58 hover:border-white/20 hover:text-white"
-                      }`}
-                    >
-                      {isDone ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
-                      <span>{step.title}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {submitError && (
-                <div className="mt-4 rounded-2xl border border-red-400/35 bg-red-500/12 p-4 text-sm font-semibold text-white">
-                  {submitError}
-                </div>
-              )}
-
-              <div className="mt-7 rounded-[1.5rem] border border-white/10 bg-[#07111a]/72 p-5 sm:p-6">
-                <div className="mb-6 flex items-center gap-3">
-                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-[#1CC88A]/12 text-[#1CC88A]">
-                    <StepIcon className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <p className="text-sm font-bold text-white/45">Etapa {currentStep + 1} de {stepMeta.length}</p>
-                    <h3 className="text-xl font-extrabold">{stepMeta[currentStep].title}</h3>
-                  </div>
-                </div>
-
-                {currentStep === 0 && <ClinicStep form={form} update={update} toggleArray={toggleArray} invalidFields={invalidFields} />}
-                {currentStep === 1 && <FinanceStep form={form} update={update} toggleArray={toggleArray} invalidFields={invalidFields} />}
-                {currentStep === 2 && <ServiceStyleStep form={form} update={update} toggleArray={toggleArray} invalidFields={invalidFields} />}
-              </div>
-
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <button
-                  type="button"
-                  onClick={() => goToStep(currentStep - 1, false)}
-                  disabled={currentStep === 0}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 px-5 py-3 text-sm font-bold text-white/76 transition hover:border-white/24 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Voltar
-                </button>
-
-                {currentStep < stepMeta.length - 1 ? (
+            <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3 w-full min-w-0">
+              {stepMeta.map((step, index) => {
+                const Icon = step.icon;
+                const isActive = currentStep === index;
+                const isDone = isStepComplete(index, form, touchedFields);
+                return (
                   <button
+                    key={step.title}
                     type="button"
-                    onClick={goToNextStep}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1CC88A] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#06131f] shadow-[0_16px_44px_rgba(28,200,138,0.28)] transition hover:bg-[#35df91]"
+                    onClick={() => goToStep(index)}
+                    className={`flex min-h-16 items-center justify-center gap-1.5 rounded-2xl border px-2 text-center text-[0.68rem] font-extrabold transition sm:gap-2 sm:px-3 sm:text-xs ${isActive
+                      ? "border-[#1CC88A] bg-[#1CC88A] text-[#06131f]"
+                      : isDone
+                        ? "border-[#1CC88A]/35 bg-[#1CC88A]/10 text-[#86f3c8]"
+                        : "border-white/10 bg-white/[0.045] text-white/58 hover:border-white/20 hover:text-white"
+                      }`}
                   >
-                    Proxima parte
-                    <ArrowRight className="h-4 w-4" />
+                    {isDone ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
+                    <span>{step.title}</span>
                   </button>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1CC88A] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#06131f] shadow-[0_16px_44px_rgba(28,200,138,0.28)] transition hover:bg-[#35df91]"
-                  >
-                    {isSubmitting ? "Enviando..." : "Salvar configuração"}
-                    <Check className="h-4 w-4" />
-                  </button>
-                )}
+                );
+              })}
+            </div>
+
+            {submitError && (
+              <div className="mt-4 rounded-2xl border border-red-400/35 bg-red-500/12 p-4 text-sm font-semibold text-white">
+                {submitError}
               </div>
+            )}
+
+            {validationError && (
+              <div className="mt-4 rounded-2xl border border-red-400/35 bg-red-500/12 p-4 text-sm font-semibold text-white">
+                {validationError}
+              </div>
+            )}
+
+            <div className="mt-7 rounded-[1.5rem] border border-white/10 bg-[#07111a]/72 p-5 sm:p-6 w-full min-w-0">
+              <div className="mb-6 flex items-center gap-3">
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-[#1CC88A]/12 text-[#1CC88A]">
+                  <StepIcon className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-sm font-bold text-white/45">Etapa {currentStep + 1} de {stepMeta.length}</p>
+                  <h3 className="text-xl font-extrabold">{stepMeta[currentStep].title}</h3>
+                </div>
+              </div>
+
+              {currentStep === 0 && <ClinicStep form={form} update={update} toggleArray={toggleArray} invalidFields={invalidFields} />}
+              {currentStep === 1 && <FinanceStep form={form} update={update} toggleArray={toggleArray} invalidFields={invalidFields} />}
+              {currentStep === 2 && <ServiceStyleStep form={form} update={update} toggleArray={toggleArray} invalidFields={invalidFields} />}
+            </div>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <button
+                type="button"
+                onClick={() => goToStep(currentStep - 1, false)}
+                disabled={currentStep === 0}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 px-5 py-3 text-sm font-bold text-white/76 transition hover:border-white/24 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </button>
+
+              {currentStep < stepMeta.length - 1 ? (
+                <button
+                  key="next-btn"
+                  type="button"
+                  onClick={goToNextStep}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1CC88A] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#06131f] shadow-[0_16px_44px_rgba(28,200,138,0.28)] transition hover:bg-[#35df91]"
+                >
+                  Proxima parte
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  key="submit-btn"
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1CC88A] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#06131f] shadow-[0_16px_44px_rgba(28,200,138,0.28)] transition hover:bg-[#35df91]"
+                >
+                  {isSubmitting ? "Enviando..." : "Salvar configuração"}
+                  <Check className="h-4 w-4" />
+                </button>
+              )}
+            </div>
           </form>
         </div>
       </section>
@@ -451,20 +468,32 @@ const SuccessScreen = ({ clinicName }: { clinicName: string }) => (
 );
 
 const ClinicStep = ({ form, update, toggleArray, invalidFields }: StepProps) => (
-  <div className="grid gap-5">
-    <div className="grid gap-4 sm:grid-cols-2">
-      <Input icon={Building2} label="Nome da clínica ou consultório" value={form.nomeClinica} onChange={(value) => update("nomeClinica", value)} hasError={invalidFields.has("nomeClinica")} />
-      <Input icon={Phone} label="Número para contato" value={form.numeroContato} onChange={(value) => update("numeroContato", value)} />
-      <Input label="Melhor e-mail pessoal" value={form.emailPessoal} onChange={(value) => update("emailPessoal", value)} type="email" />
+  <div className="flex flex-col gap-5 w-full min-w-0">
+    <div className="grid gap-4 sm:grid-cols-2 w-full min-w-0">
+      <Input icon={Building2} label="Nome da clínica ou consultório" placeholder="Digite o nome da clínica ou consultório" value={form.nomeClinica} onChange={(value) => update("nomeClinica", value)} hasError={invalidFields.has("nomeClinica")} />
+      <Input
+        icon={Phone}
+        label="Número para contato"
+        placeholder="Digite seu WhatsApp"
+        value={form.numeroContato}
+        maxLength={11}
+        inputMode="numeric"
+        onChange={(value) => {
+          const onlyNums = value.replace(/\D/g, "");
+          update("numeroContato", onlyNums);
+        }}
+        hasError={invalidFields.has("numeroContato")}
+      />
+      <Input icon={Mail} label="Melhor e-mail pessoal" placeholder="@seumelhoremail" value={form.emailPessoal} onChange={(value) => update("emailPessoal", value)} type="email" hasError={invalidFields.has("emailPessoal")} />
     </div>
     <ChoiceGroup label="Tipo de estabelecimento" options={ESTABELECIMENTOS} value={form.tipoEstabelecimento} onChange={(value) => update("tipoEstabelecimento", value)} />
-    <Input icon={MapPin} label="Endereço completo" value={form.endereco} onChange={(value) => update("endereco", value)} hasError={invalidFields.has("endereco")} />
-    <div className="grid gap-4 sm:grid-cols-2">
-      <Input icon={MapPin} label="Link do Google Maps" value={form.googleMaps} onChange={(value) => update("googleMaps", value)} hasError={invalidFields.has("googleMaps")} />
-      <Input icon={MapPin} label="Referência/localização" value={form.referencia} onChange={(value) => update("referencia", value)} />
+    <Input icon={MapPin} label="Endereço completo" placeholder="Digite o endereço completo da clínica" value={form.endereco} onChange={(value) => update("endereco", value)} hasError={invalidFields.has("endereco")} />
+    <div className="grid gap-4 sm:grid-cols-2 w-full min-w-0">
+      <Input icon={Link} label="Link do Google Maps" placeholder="Cole o link de localização do Google Maps" value={form.googleMaps} onChange={(value) => update("googleMaps", value)} hasError={invalidFields.has("googleMaps")} />
+      <Input icon={MapPin} label="Referência/localização" placeholder="Ponto de referência ou andar/sala" value={form.referencia} onChange={(value) => update("referencia", value)} />
     </div>
     <MultiChips label="Dias de funcionamento" options={DIAS} selected={form.diasFuncionamento} onToggle={(value) => toggleArray("diasFuncionamento", value)} />
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2 w-full min-w-0">
       <TimePicker label="Abre às" value={form.horaInicio} onChange={(value) => update("horaInicio", value)} />
       <TimePicker label="Fecha às" value={form.horaFim} onChange={(value) => update("horaFim", value)} />
     </div>
@@ -490,9 +519,9 @@ const AgendaStep = ({ form, update, toggleArray }: StepProps) => (
 
 const FinanceStep = ({ form, update, toggleArray, invalidFields }: StepProps) => (
   <div className="grid gap-5">
-    <Input icon={CreditCard} label="Valores das consultas" value={form.valoresConsultas} onChange={(value) => update("valoresConsultas", value)} hasError={invalidFields.has("valoresConsultas")} />
+    <Input icon={CreditCard} label="Valores das consultas" placeholder="Ex: R$ 150 a R$ 300" value={form.valoresConsultas} onChange={(value) => update("valoresConsultas", value)} hasError={invalidFields.has("valoresConsultas")} />
     <MultiChips label="Formas de pagamento aceitas" options={PAGAMENTOS} selected={form.formasPagamento} onToggle={(value) => toggleArray("formasPagamento", value)} />
-    <Textarea label="Convenios aceitos" value={form.convenios} onChange={(value) => update("convenios", value)} />
+    <Textarea label="Convenios aceitos" placeholder="Ex: Unimed, Bradesco, Amil (ou deixe em branco caso não atenda convênios)" value={form.convenios} onChange={(value) => update("convenios", value)} />
     <div className="grid gap-4 sm:grid-cols-2">
       <ChoiceGroup
         label="Pode cobrar sinal/adiantamento?"
@@ -516,9 +545,11 @@ const ServiceStyleStep = ({ form, update }: StepProps) => (
       value={form.boasVindas}
       onChange={(value) => update("boasVindas", value)}
     />
-    <div className="grid gap-4 sm:grid-cols-3">
-      <ChoiceGroup label="Pode remarcar?" options={["Sim", "Não"]} value={form.podeRemarcar} onChange={(value) => update("podeRemarcar", value)} />
-      <ChoiceGroup label="Pode cancelar?" options={["Sim", "Não"]} value={form.podeCancelar} onChange={(value) => update("podeCancelar", value)} />
+    <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-4">
+        <ChoiceGroup label="Pode remarcar?" options={["Sim", "Não"]} value={form.podeRemarcar} onChange={(value) => update("podeRemarcar", value)} />
+        <ChoiceGroup label="Pode cancelar?" options={["Sim", "Não"]} value={form.podeCancelar} onChange={(value) => update("podeCancelar", value)} />
+      </div>
       <SelectPill label="Tempo máximo de resposta" value={form.tempoResposta} options={["Até 1 minuto", "Até 2 minutos", "Até 5 minutos", "Até 10 minutos"]} onChange={(value) => update("tempoResposta", value)} />
     </div>
     <DefaultOrCustomText
@@ -593,28 +624,32 @@ type FieldProps = {
   icon?: typeof Building2;
   readOnly?: boolean;
   hasError?: boolean;
+  placeholder?: string;
+  maxLength?: number;
+  inputMode?: "search" | "text" | "none" | "tel" | "url" | "email" | "numeric" | "decimal";
 };
 
-const Input = ({ label, value, onChange, type = "text", icon: Icon, readOnly, hasError }: FieldProps) => (
+const Input = ({ label, value, onChange, type = "text", icon: Icon, readOnly, hasError, placeholder, maxLength, inputMode }: FieldProps) => (
   <label className="block">
     <span className={`mb-2 block text-sm font-bold ${hasError ? "text-red-300" : "text-white/78"}`}>{label}</span>
-    <span className={`flex items-center rounded-2xl border px-4 transition focus-within:border-[#1CC88A]/70 ${
-      hasError ? "border-red-400/80 bg-red-500/10" : "border-white/10 bg-white/[0.055]"
-    }`}>
+    <div className={`flex items-center w-full rounded-2xl border px-4 transition focus-within:border-[#1CC88A]/70 ${hasError ? "border-red-400/80 bg-red-500/10" : "border-white/10 bg-white/[0.055]"
+      }`}>
       {Icon && <Icon className={`mr-3 h-4 w-4 ${hasError ? "text-red-300" : "text-white/38"}`} />}
       <input
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         readOnly={readOnly}
-        className={`min-h-12 w-full bg-transparent text-sm font-semibold text-white outline-none ${hasError ? "placeholder:text-red-200/55" : "placeholder:text-white/34"}`}
-        placeholder={label}
+        maxLength={maxLength}
+        inputMode={inputMode}
+        className={`min-h-12 flex-1 min-w-0 bg-transparent text-sm font-semibold text-white outline-none ${hasError ? "placeholder:text-red-200/55" : "placeholder:text-white/34"}`}
+        placeholder={placeholder || label}
       />
-    </span>
+    </div>
   </label>
 );
 
-const Textarea = ({ label, value, onChange, readOnly, hasError }: Omit<FieldProps, "type" | "icon">) => (
+const Textarea = ({ label, value, onChange, readOnly, hasError, placeholder }: Omit<FieldProps, "type" | "icon">) => (
   <label className="block">
     <span className={`mb-2 block text-sm font-bold ${hasError ? "text-red-300" : "text-white/78"}`}>{label}</span>
     <textarea
@@ -622,10 +657,9 @@ const Textarea = ({ label, value, onChange, readOnly, hasError }: Omit<FieldProp
       onChange={(event) => onChange(event.target.value)}
       readOnly={readOnly}
       rows={3}
-      className={`w-full resize-none rounded-2xl border px-4 py-3 text-sm font-semibold text-white outline-none transition focus:border-[#1CC88A]/70 ${
-        hasError ? "border-red-400/80 bg-red-500/10 placeholder:text-red-200/55" : "border-white/10 bg-white/[0.055] placeholder:text-white/34"
-      }`}
-      placeholder={label}
+      className={`w-full resize-none rounded-2xl border px-4 py-3 text-sm font-semibold text-white outline-none transition focus:border-[#1CC88A]/70 ${hasError ? "border-red-400/80 bg-red-500/10 placeholder:text-red-200/55" : "border-white/10 bg-white/[0.055] placeholder:text-white/34"
+        }`}
+      placeholder={placeholder || label}
     />
   </label>
 );
@@ -633,42 +667,67 @@ const Textarea = ({ label, value, onChange, readOnly, hasError }: Omit<FieldProp
 const TimePicker = ({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedHour = "00", selectedMinute = "00"] = value.split(":");
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const updateTime = (hour: string, minute: string) => {
     onChange(`${hour}:${minute}`);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let raw = event.target.value.replace(/\D/g, "");
+    if (raw.length > 4) raw = raw.slice(0, 4);
+
+    let formatted = raw;
+    if (raw.length > 2) {
+      formatted = `${raw.slice(0, 2)}:${raw.slice(2)}`;
+    }
+    onChange(formatted);
+  };
+
+  const handleBlur = () => {
+    let [hStr = "08", mStr = "00"] = value.split(":");
+    let h = parseInt(hStr, 10);
+    let m = parseInt(mStr, 10);
+
+    if (isNaN(h) || h < 0 || h > 23) h = 8;
+    if (isNaN(m) || m < 0 || m > 59) m = 0;
+
+    onChange(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+  };
+
   return (
-    <div className="relative">
+    <div className="relative min-w-0" ref={containerRef}>
       <p className="mb-2 block text-sm font-bold text-white/78">{label}</p>
       <div
-        role="button"
-        tabIndex={0}
-        onClick={() => setIsOpen((open) => !open)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            setIsOpen((open) => !open);
-          }
-        }}
-        className="flex min-h-14 w-full cursor-pointer items-center rounded-2xl border border-[#1CC88A]/24 bg-[#0b2339]/42 px-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.055),0_14px_34px_rgba(0,0,0,0.18)] backdrop-blur-xl transition hover:border-[#1CC88A]/48 focus:border-[#1CC88A]/70 focus:outline-none"
-        aria-expanded={isOpen}
-        aria-label={`${label}: abrir seletor de horario`}
+        className="flex min-h-14 w-full items-center rounded-2xl border border-[#1CC88A]/24 bg-[#0b2339]/42 px-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.055),0_14px_34px_rgba(0,0,0,0.18)] backdrop-blur-xl transition hover:border-[#1CC88A]/48 focus-within:border-[#1CC88A]/70 focus-within:outline-none"
       >
-        <Clock3 className="mr-3 h-4 w-4 text-white/42" />
+        <Clock3
+          className="mr-3 h-4 w-4 text-white/42 cursor-pointer hover:text-[#1CC88A] transition"
+          onClick={() => setIsOpen((open) => !open)}
+        />
         <input
           type="text"
           value={value}
-          readOnly
-          className="pointer-events-none min-h-12 flex-1 cursor-pointer bg-transparent text-sm font-extrabold text-white outline-none"
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+          onFocus={() => setIsOpen(true)}
+          placeholder="00:00"
+          className="min-h-12 flex-1 bg-transparent text-sm font-extrabold text-white outline-none placeholder:text-white/20"
           aria-label={`${label}: horario selecionado`}
         />
         <button
           type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            setIsOpen((open) => !open);
-          }}
+          onClick={() => setIsOpen((open) => !open)}
           className="-mr-1 grid h-10 w-10 place-items-center rounded-xl text-white/58 transition hover:bg-white/5 hover:text-white focus:outline-none"
           aria-expanded={isOpen}
           aria-label={`${label}: selecionar horário`}
@@ -815,13 +874,12 @@ const TimeWheel = ({
         }
       `}</style>
       <div
-        className={`grid h-full grid-rows-5 items-center ${
-          rollingDirection === "up"
-            ? "animate-[timeWheelRollUp_280ms_ease-out]"
-            : rollingDirection === "down"
-              ? "animate-[timeWheelRollDown_280ms_ease-out]"
-              : ""
-        }`}
+        className={`grid h-full grid-rows-5 items-center ${rollingDirection === "up"
+          ? "animate-[timeWheelRollUp_280ms_ease-out]"
+          : rollingDirection === "down"
+            ? "animate-[timeWheelRollDown_280ms_ease-out]"
+            : ""
+          }`}
       >
         {visibleOptions.map((option) => {
           const isSelected = option.offset === 0;
@@ -873,13 +931,12 @@ const TimeWheel = ({
                 }
                 moveWheelBy(option.offset);
               }}
-              className={`relative z-20 grid h-10 w-full appearance-none place-items-center rounded-xl border-0 bg-transparent text-center font-black outline-none transition-all duration-300 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0 ${
-                isIlluminated
-                  ? "scale-110 text-2xl text-[#1CC88A] drop-shadow-[0_0_14px_rgba(28,200,138,0.42)]"
-                  : isSelected
-                    ? "text-xl text-white/42"
-                    : "text-lg text-white/20 hover:text-white/58"
-              }`}
+              className={`relative z-20 grid h-10 w-full appearance-none place-items-center rounded-xl border-0 bg-transparent text-center font-black outline-none transition-all duration-300 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0 ${isIlluminated
+                ? "scale-110 text-2xl text-[#1CC88A] drop-shadow-[0_0_14px_rgba(28,200,138,0.42)]"
+                : isSelected
+                  ? "text-xl text-white/42"
+                  : "text-lg text-white/20 hover:text-white/58"
+                }`}
             >
               {option.value}
             </button>
@@ -914,18 +971,16 @@ const DefaultOrCustomText = ({
         <button
           type="button"
           onClick={() => onChange(defaultValue)}
-          className={`rounded-full border px-4 py-2 text-sm font-extrabold transition ${
-            isDefault ? "border-[#1CC88A] bg-[#1CC88A] text-[#06131f]" : "border-white/10 bg-white/[0.055] text-white/62 hover:text-white"
-          }`}
+          className={`rounded-full border px-4 py-2 text-sm font-extrabold transition ${isDefault ? "border-[#1CC88A] bg-[#1CC88A] text-[#06131f]" : "border-white/10 bg-white/[0.055] text-white/62 hover:text-white"
+            }`}
         >
           {defaultLabel}
         </button>
         <button
           type="button"
           onClick={() => onChange(isDefault ? "" : value)}
-          className={`rounded-full border px-4 py-2 text-sm font-extrabold transition ${
-            !isDefault ? "border-[#1CC88A] bg-[#1CC88A] text-[#06131f]" : "border-white/10 bg-white/[0.055] text-white/62 hover:text-white"
-          }`}
+          className={`rounded-full border px-4 py-2 text-sm font-extrabold transition ${!isDefault ? "border-[#1CC88A] bg-[#1CC88A] text-[#06131f]" : "border-white/10 bg-white/[0.055] text-white/62 hover:text-white"
+            }`}
         >
           {customLabel}
         </button>
@@ -970,9 +1025,8 @@ const ChoiceGroup = ({
           key={option}
           type="button"
           onClick={() => onChange(option)}
-          className={`rounded-full border px-4 py-2 text-sm font-extrabold transition ${
-            value === option ? "border-[#1CC88A] bg-[#1CC88A] text-[#06131f]" : "border-white/10 bg-white/[0.055] text-white/62 hover:text-white"
-          }`}
+          className={`rounded-full border px-4 py-2 text-sm font-extrabold transition ${value === option ? "border-[#1CC88A] bg-[#1CC88A] text-[#06131f]" : "border-white/10 bg-white/[0.055] text-white/62 hover:text-white"
+            }`}
         >
           {option}
         </button>
@@ -990,9 +1044,8 @@ const MultiChips = ({ label, options, selected, onToggle }: { label: string; opt
           key={option}
           type="button"
           onClick={() => onToggle(option)}
-          className={`rounded-full border px-4 py-2 text-sm font-extrabold transition ${
-            selected.includes(option) ? "border-[#1CC88A] bg-[#1CC88A] text-[#06131f]" : "border-white/10 bg-white/[0.055] text-white/62 hover:text-white"
-          }`}
+          className={`rounded-full border px-4 py-2 text-sm font-extrabold transition ${selected.includes(option) ? "border-[#1CC88A] bg-[#1CC88A] text-[#06131f]" : "border-white/10 bg-white/[0.055] text-white/62 hover:text-white"
+            }`}
         >
           {option}
         </button>
@@ -1004,17 +1057,22 @@ const MultiChips = ({ label, options, selected, onToggle }: { label: string; opt
 const SelectPill = ({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (value: string) => void }) => (
   <label className="block">
     <span className="mb-2 block text-sm font-bold text-white/78">{label}</span>
-    <select
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      className="min-h-12 w-full rounded-2xl border border-white/10 bg-[#111820] px-4 text-sm font-extrabold text-white outline-none transition focus:border-[#1CC88A]/70"
-    >
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="min-h-14 w-full appearance-none rounded-2xl border border-white/10 bg-[#111820] pl-4 pr-10 text-sm font-extrabold text-white outline-none transition focus:border-[#1CC88A]/70"
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-white/58">
+        <ChevronDown className="h-4 w-4" />
+      </div>
+    </div>
   </label>
 );
 
@@ -1061,19 +1119,52 @@ const buildOrderedPayload = (form: FormData) => ({
 
 const isFilled = (value: string | string[]) => (Array.isArray(value) ? value.length > 0 : value.trim().length > 0);
 
+const clinicStepSchema = z.object({
+  nomeClinica: z.string().trim().min(1, "O nome da clínica ou consultório é obrigatório"),
+  numeroContato: z.string().trim().min(10, "O número para contato deve ter pelo menos 10 dígitos (DDD + número)"),
+  emailPessoal: z.string().trim().email("Formato de e-mail inválido").or(z.literal("")),
+  endereco: z.string().trim(),
+  googleMaps: z.string().trim(),
+}).refine(data => data.endereco.length > 0 || data.googleMaps.length > 0, {
+  message: "Preencha o endereço completo ou insira o link do Google Maps",
+  path: ["endereco"],
+});
+
+const financeStepSchema = z.object({
+  valoresConsultas: z.string().trim().min(1, "Os valores das consultas são obrigatórios"),
+});
+
 const validateStep = (stepIndex: number, form: FormData) => {
   if (stepIndex === 0) {
-    if (!isFilled(form.nomeClinica)) {
-      return { isValid: false, message: `Preencha o campo ${requiredFieldLabels.nomeClinica}.`, fields: ["nomeClinica"] as Array<keyof FormData> };
-    }
+    const result = clinicStepSchema.safeParse(form);
+    if (!result.success) {
+      const error = result.error.issues[0];
+      const invalidFieldsList = result.error.issues.map((issue) => issue.path[0] as keyof FormData);
 
-    if (!isFilled(form.endereco) && !isFilled(form.googleMaps)) {
-      return { isValid: false, message: `Preencha o campo ${requiredFieldLabels.endereco}.`, fields: ["endereco", "googleMaps"] as Array<keyof FormData> };
+      // If refine failed for address, add both address fields
+      if (result.error.issues.some(issue => issue.code === "custom")) {
+        if (!invalidFieldsList.includes("endereco")) invalidFieldsList.push("endereco");
+        if (!invalidFieldsList.includes("googleMaps")) invalidFieldsList.push("googleMaps");
+      }
+      return {
+        isValid: false,
+        message: error.message,
+        fields: invalidFieldsList,
+      };
     }
   }
 
-  if (stepIndex === 1 && !isFilled(form.valoresConsultas)) {
-    return { isValid: false, message: `Preencha o campo ${requiredFieldLabels.valoresConsultas}.`, fields: ["valoresConsultas"] as Array<keyof FormData> };
+  if (stepIndex === 1) {
+    const result = financeStepSchema.safeParse(form);
+    if (!result.success) {
+      const error = result.error.issues[0];
+      const invalidFieldsList = result.error.issues.map((issue) => issue.path[0] as keyof FormData);
+      return {
+        isValid: false,
+        message: error.message,
+        fields: invalidFieldsList,
+      };
+    }
   }
 
   return { isValid: true, message: "", fields: [] as Array<keyof FormData> };
