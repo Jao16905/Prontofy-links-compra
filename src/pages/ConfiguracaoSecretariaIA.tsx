@@ -256,7 +256,7 @@ const ConfiguracaoSecretariaIA = () => {
 
   return (
     <main className="min-h-screen bg-[#06131f] text-white">
-      <header className="fixed inset-x-0 top-0 z-[80] border-b border-white/10 bg-[#06131f] px-5 py-3 shadow-[0_16px_38px_rgba(0,0,0,0.34)] sm:px-8 lg:px-10">
+      <header className="fixed inset-x-0 top-0 z-[80] min-h-20 border-b border-white/10 bg-[#06131f]/92 px-5 py-5 shadow-[0_16px_38px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:min-h-0 sm:px-8 sm:py-3 lg:px-10">
         <div className="mx-auto flex max-w-6xl items-center gap-4">
           <ProntofyLogo
             className="gap-2 sm:gap-2.5"
