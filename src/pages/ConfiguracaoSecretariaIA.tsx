@@ -18,6 +18,11 @@ const ESTABELECIMENTOS = ["Consultório individual", "Clínica", "Coworking"];
 const TONS = ["Acolhedor", "Formal", "Premium", "Descontraído", "Técnico"];
 const PAGAMENTOS = ["Pix", "Cartão", "Dinheiro", "Boleto", "Transferência"];
 const ESPECIALIDADES = ["Clínica médica", "Cardiologia", "Dermatologia", "Pediatria", "Psiquiatria", "Ortopedia", "Outra"];
+const TIME_OPTIONS = Array.from({ length: 48 }, (_, index) => {
+  const hours = String(Math.floor(index / 2)).padStart(2, "0");
+  const minutes = index % 2 === 0 ? "00" : "30";
+  return `${hours}:${minutes}`;
+});
 const DEFAULT_WELCOME_MESSAGE = "Olá, aqui é a secretária virtual da clínica X.";
 const DEFAULT_PATIENT_QUESTIONS = "Nome, idade, motivo da consulta e queixa principal.";
 const WHATSAPP_URL = "https://wa.me/message/YO6R73FVJZHTC1";
@@ -155,6 +160,11 @@ const ConfiguracaoSecretariaIA = () => {
     event.preventDefault();
     setSubmitError("");
 
+    if (currentStep < stepMeta.length - 1) {
+      goToNextStep();
+      return;
+    }
+
     const firstInvalidStep = getFirstInvalidStep(form);
     if (firstInvalidStep) {
       setCurrentStep(firstInvalidStep.index);
@@ -168,25 +178,37 @@ const ConfiguracaoSecretariaIA = () => {
     setIsSubmitting(true);
 
     try {
+      const payload = {
+        nomeClinica: form.nomeClinica,
+        tipoEstabelecimento: form.tipoEstabelecimento,
+        endereco: form.endereco,
+        googleMaps: form.googleMaps,
+        referencia: form.referencia,
+        diasFuncionamento: form.diasFuncionamento,
+        horaInicio: form.horaInicio,
+        horaFim: form.horaFim,
+        valoresConsultas: form.valoresConsultas,
+        formasPagamento: form.formasPagamento.join(", "),
+        convenios: form.convenios,
+        cobrarSinalAdiantamento: form.permiteEncaixe,
+        atendimentoIA: {
+          tomComunicacao: form.tomComunicacao || initialData.tomComunicacao,
+          boasVindas: form.boasVindas || getDefaultWelcomeMessage(form.nomeClinica),
+          perguntasIniciais: form.perguntasIniciais || DEFAULT_PATIENT_QUESTIONS,
+          podeRemarcar: form.podeRemarcar || initialData.podeRemarcar,
+          podeCancelar: form.podeCancelar || initialData.podeCancelar,
+          tempoResposta: form.tempoResposta || initialData.tempoResposta,
+        },
+        data_envio: new Date().toISOString(),
+        origem: "configuracao-secretaria-ia",
+      };
+
       const response = await fetch(N8N_WEBHOOK_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...form,
-          formasPagamento: form.formasPagamento.join(", "),
-          atendimentoIA: {
-            tomComunicacao: form.tomComunicacao || initialData.tomComunicacao,
-            boasVindas: form.boasVindas || getDefaultWelcomeMessage(form.nomeClinica),
-            perguntasIniciais: form.perguntasIniciais || DEFAULT_PATIENT_QUESTIONS,
-            podeRemarcar: form.podeRemarcar || initialData.podeRemarcar,
-            podeCancelar: form.podeCancelar || initialData.podeCancelar,
-            tempoResposta: form.tempoResposta || initialData.tempoResposta,
-          },
-          data_envio: new Date().toISOString(),
-          origem: "configuracao-secretaria-ia",
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -466,8 +488,8 @@ const ClinicStep = ({ form, update, toggleArray, invalidFields }: StepProps) => 
     </div>
     <MultiChips label="Dias de funcionamento" options={DIAS} selected={form.diasFuncionamento} onToggle={(value) => toggleArray("diasFuncionamento", value)} />
     <div className="grid gap-4 sm:grid-cols-2">
-      <Input icon={Clock3} label="Abre as" type="time" value={form.horaInicio} onChange={(value) => update("horaInicio", value)} />
-      <Input icon={Clock3} label="Fecha as" type="time" value={form.horaFim} onChange={(value) => update("horaFim", value)} />
+      <TimePicker label="Abre às" value={form.horaInicio} onChange={(value) => update("horaInicio", value)} />
+      <TimePicker label="Fecha às" value={form.horaFim} onChange={(value) => update("horaFim", value)} />
     </div>
   </div>
 );
@@ -495,7 +517,13 @@ const FinanceStep = ({ form, update, toggleArray, invalidFields }: StepProps) =>
     <MultiChips label="Formas de pagamento aceitas" options={PAGAMENTOS} selected={form.formasPagamento} onToggle={(value) => toggleArray("formasPagamento", value)} />
     <Textarea label="Convenios aceitos" value={form.convenios} onChange={(value) => update("convenios", value)} />
     <div className="grid gap-4 sm:grid-cols-2">
-      <ChoiceGroup label="Pode cobrar sinal/adiantamento?" options={["Sim", "Não"]} value={form.permiteEncaixe} onChange={(value) => update("permiteEncaixe", value)} />
+      <ChoiceGroup
+        label="Pode cobrar sinal/adiantamento?"
+        description="Quer que a secretária IA cobre o pagamento do cliente antes de ele realizar a consulta?"
+        options={["Sim", "Não"]}
+        value={form.permiteEncaixe}
+        onChange={(value) => update("permiteEncaixe", value)}
+      />
     </div>
   </div>
 );
@@ -625,6 +653,36 @@ const Textarea = ({ label, value, onChange, readOnly, hasError }: Omit<FieldProp
   </label>
 );
 
+const TimePicker = ({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) => (
+  <div>
+    <p className="mb-2 block text-sm font-bold text-white/78">{label}</p>
+    <div className="grid gap-2 rounded-2xl border border-white/10 bg-white/[0.055] p-2 sm:grid-cols-[1fr_0.95fr]">
+      <label className="flex items-center rounded-xl bg-[#111820]/72 px-3">
+        <Clock3 className="mr-3 h-4 w-4 text-white/38" />
+        <select
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className="min-h-11 w-full bg-transparent text-sm font-extrabold text-white outline-none"
+          aria-label={`${label}: selecionar horário`}
+        >
+          {TIME_OPTIONS.map((time) => (
+            <option key={time} value={time}>
+              {time}
+            </option>
+          ))}
+        </select>
+      </label>
+      <input
+        type="time"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="min-h-11 rounded-xl border border-white/10 bg-[#111820]/72 px-3 text-sm font-extrabold text-white outline-none transition focus:border-[#1CC88A]/70"
+        aria-label={`${label}: digitar horário`}
+      />
+    </div>
+  </div>
+);
+
 const DefaultOrCustomText = ({
   label,
   defaultLabel,
@@ -683,9 +741,22 @@ const DefaultOrCustomText = ({
   );
 };
 
-const ChoiceGroup = ({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: (value: string) => void }) => (
+const ChoiceGroup = ({
+  label,
+  description,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  description?: string;
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+}) => (
   <div>
     <p className="mb-2 text-sm font-bold text-white/78">{label}</p>
+    {description && <p className="-mt-1 mb-3 text-sm font-medium leading-6 text-white/56">{description}</p>}
     <div className="flex flex-wrap gap-2">
       {options.map((option) => (
         <button
