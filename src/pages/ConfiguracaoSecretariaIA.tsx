@@ -28,7 +28,7 @@ const MINUTES = Array.from({ length: 60 }, (_, minute) => String(minute).padStar
 const DEFAULT_WELCOME_MESSAGE = "Olá, aqui é a secretária virtual da (nome da sua unidade de saúde).";
 const DEFAULT_PATIENT_QUESTIONS = "Nome, idade, motivo da consulta e queixa principal.";
 const WHATSAPP_URL = "https://wa.me/message/YO6R73FVJZHTC1";
-const N8N_WEBHOOK_URL = "https://teste-n8n-editor.6esqeg.easypanel.host/webhook-test/sec-de-ia";
+const N8N_WEBHOOK_URL = "https://teste-n8n-editor.6esqeg.easypanel.host/webhook/sec-de-ia";
 const STEP_PROGRESS = [0, 40, 90];
 
 type FlowStep = "inicio" | "formulario" | "sucesso";
