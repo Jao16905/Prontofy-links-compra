@@ -256,7 +256,7 @@ const ConfiguracaoSecretariaIA = () => {
 
   return (
     <main className="min-h-screen bg-[#06131f] text-white">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#06131f]/92 px-5 py-3 shadow-[0_16px_38px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:px-8 lg:px-10">
+      <header className="fixed inset-x-0 top-0 z-[80] border-b border-white/10 bg-[#06131f] px-5 py-3 shadow-[0_16px_38px_rgba(0,0,0,0.34)] sm:px-8 lg:px-10">
         <div className="mx-auto flex max-w-6xl items-center gap-4">
           <ProntofyLogo
             className="gap-2 sm:gap-2.5"
@@ -726,11 +726,21 @@ const TimeWheel = ({
   const [isEditing, setIsEditing] = useState(false);
   const [draftValue, setDraftValue] = useState(value);
   const editInputRef = useRef<HTMLInputElement>(null);
+  const dragStartYRef = useRef<number | null>(null);
+  const wheelWasDraggedRef = useRef(false);
   const selectedIndex = Math.max(0, options.indexOf(value));
   const visibleOptions = [-2, -1, 0, 1, 2].map((offset) => {
     const optionIndex = (selectedIndex + offset + options.length) % options.length;
     return { offset, value: options[optionIndex] };
   });
+
+  const moveWheelBy = (offset: number) => {
+    const nextIndex = (selectedIndex + offset + options.length) % options.length;
+
+    setRollingDirection(offset > 0 ? "up" : "down");
+    setIlluminatedValue("");
+    onChange(options[nextIndex]);
+  };
 
   const commitDraftValue = () => {
     const parsedValue = Number.parseInt(draftValue, 10);
@@ -768,8 +778,31 @@ const TimeWheel = ({
 
   return (
     <div
-      className="relative z-10 h-48 overflow-hidden pr-1 [mask-image:linear-gradient(to_bottom,transparent_0%,black_22%,black_78%,transparent_100%)]"
+      className="relative z-10 h-48 touch-none select-none overflow-hidden pr-1 [mask-image:linear-gradient(to_bottom,transparent_0%,black_22%,black_78%,transparent_100%)]"
       aria-label={ariaLabel}
+      onPointerDown={(event) => {
+        if (isEditing) return;
+        dragStartYRef.current = event.clientY;
+        wheelWasDraggedRef.current = false;
+        event.currentTarget.setPointerCapture(event.pointerId);
+      }}
+      onPointerMove={(event) => {
+        if (dragStartYRef.current === null || isEditing) return;
+
+        const dragDistance = event.clientY - dragStartYRef.current;
+        if (Math.abs(dragDistance) < 28) return;
+
+        wheelWasDraggedRef.current = true;
+        moveWheelBy(dragDistance < 0 ? 1 : -1);
+        dragStartYRef.current = event.clientY;
+      }}
+      onPointerUp={(event) => {
+        dragStartYRef.current = null;
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }}
+      onPointerCancel={() => {
+        dragStartYRef.current = null;
+      }}
     >
       <style>{`
         @keyframes timeWheelRollUp {
@@ -829,14 +862,16 @@ const TimeWheel = ({
               type="button"
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
+                if (wheelWasDraggedRef.current) {
+                  wheelWasDraggedRef.current = false;
+                  return;
+                }
                 if (isSelected) {
                   setDraftValue(option.value);
                   setIsEditing(true);
                   return;
                 }
-                setRollingDirection(option.offset > 0 ? "up" : "down");
-                setIlluminatedValue("");
-                onChange(option.value);
+                moveWheelBy(option.offset);
               }}
               className={`relative z-20 grid h-10 w-full appearance-none place-items-center rounded-xl border-0 bg-transparent text-center font-black outline-none transition-all duration-300 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0 ${
                 isIlluminated
