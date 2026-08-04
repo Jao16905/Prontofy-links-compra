@@ -1,0 +1,44 @@
+name: CI/CD React Pipeline PRONTOFY_LINKS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Converter nome do repositório para minúsculas
+        run: echo "REPO_LOWERCASE=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+
+      # 1. PASSO CRUCIAL PARA REACT: GERAR O ARQUIVO .ENV
+      - name: Injetar Variáveis de Ambiente
+        run: |
+          cat << 'EOF' > .env.production
+          ${{ secrets.ENV_FILE }}
+          EOF
+
+      - name: Login no GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build e Push da Imagem
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ env.REPO_LOWERCASE }}:latest
+
+      - name: Disparar Webhook do Easypanel
+        run: curl -X POST "${{ secrets.EASYPANEL_WEBHOOK_URL }}"
