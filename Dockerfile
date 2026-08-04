@@ -8,28 +8,10 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
 
-# Copia o restante do código
+# Copia o restante do código (INCLUINDO o .env.production gerado pelo GitHub Actions)
 COPY . .
 
-# ---------------------------------------------------
-# DECLARAÇÃO DOS ARGUMENTOS (Recebidos do GitHub Actions)
-# ---------------------------------------------------
-ARG VITE_N8N_WEBHOOK_URL
-ARG VITE_SUPABASE_MARKETING_PUBLISHABLE_KEY
-ARG VITE_SUPABASE_MARKETING_URL
-ARG VITE_SUPABASE_PUBLISHABLE_KEY
-ARG VITE_SUPABASE_URL
-
-# ---------------------------------------------------
-# ATIVAÇÃO DAS VARIÁVEIS (Disponibiliza para o Vite)
-# ---------------------------------------------------
-ENV VITE_N8N_WEBHOOK_URL=$VITE_N8N_WEBHOOK_URL
-ENV VITE_SUPABASE_MARKETING_PUBLISHABLE_KEY=$VITE_SUPABASE_MARKETING_PUBLISHABLE_KEY
-ENV VITE_SUPABASE_MARKETING_URL=$VITE_SUPABASE_MARKETING_URL
-ENV VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
-ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
-
-# O processo de build do React vai ler as variáveis acima e embutir no JS
+# O processo de build do React via Vite vai ler o .env.production automaticamente
 RUN npm run build
 
 # ==========================================
