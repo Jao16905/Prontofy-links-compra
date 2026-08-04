@@ -39,6 +39,12 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ env.REPO_LOWERCASE }}:latest
+          build-args: |
+            VITE_N8N_WEBHOOK_URL=${{ secrets.VITE_N8N_WEBHOOK_URL }}
+            VITE_SUPABASE_MARKETING_PUBLISHABLE_KEY=${{ secrets.VITE_SUPABASE_MARKETING_PUBLISHABLE_KEY }}
+            VITE_SUPABASE_MARKETING_URL=${{ secrets.VITE_SUPABASE_MARKETING_URL }}
+            VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+            VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}
 
       - name: Disparar Webhook do Easypanel
         run: curl -X POST "${{ secrets.EASYPANEL_WEBHOOK_URL }}"
