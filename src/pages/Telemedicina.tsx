@@ -3,7 +3,8 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import ProntofyLogo from "@/components/ProntofyLogo";
 import cardPatients from "@/assets/card-patients.jpg";
 
-const WEBHOOK_URL = "https://teste-n8n-webhook.6esqeg.easypanel.host/webhook/telemedicina";
+const WEBHOOK_BASE_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || "/webhook";
+const WEBHOOK_URL = `${WEBHOOK_BASE_URL}/telemedicina`;
 
 type TelemedicineFormState = {
   nome: string;

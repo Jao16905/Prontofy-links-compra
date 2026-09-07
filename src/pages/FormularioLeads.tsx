@@ -357,7 +357,8 @@ const FormularioLeads = () => {
 
     try {
       setIsSubmitting(true);
-      const response = await fetch(`${import.meta.env.VITE_N8N_WEBHOOK_URL}/relacionamento`, {
+      const webhookBase = (import.meta.env.VITE_N8N_WEBHOOK_URL || "/webhook").replace(/\/$/, "");
+      const response = await fetch(`${webhookBase}/relacionamento`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

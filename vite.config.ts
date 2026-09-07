@@ -13,10 +13,9 @@ export default defineConfig({
     },
     proxy: {
       "/webhook": {
-        target: "https://teste-n8n-webhook.6esqeg.easypanel.host/webhook",
+        target: "https://teste-n8n-webhook.6esqeg.easypanel.host",
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/webhook/, '')
       },
     },
   },
