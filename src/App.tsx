@@ -6,7 +6,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { CookieConsent } from "@/components/CookieConsent";
 import { PromoBanner } from "@/components/PromoBanner";
-import { getActivePromotion, processPromoUrlParam } from "@/lib/promo";
+import { getActivePromotion, processPromoUrlParam, fetchActivePromotionFromDb } from "@/lib/promo";
 import { Promotion } from "@/types/promotion";
 
 const Apresentacao = lazy(() => import("./pages/Apresentacao"));
@@ -36,9 +36,16 @@ const AppRoutes = () => {
       });
     } else {
       const active = getActivePromotion(location.pathname, currentHostname);
-      setPromo(active);
+      if (active) {
+        setPromo(active);
+      } else {
+        fetchActivePromotionFromDb(location.pathname, currentHostname).then((fetchedPromo) => {
+          setPromo(fetchedPromo);
+        });
+      }
     }
   }, [location.pathname, location.search]);
+
 
 
   return (

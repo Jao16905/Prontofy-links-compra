@@ -39,17 +39,25 @@ export function extractPathname(urlOrPath: string): string {
   }
 }
 
-export function isDomainMatchingPromotion(hostname: string, targetDomains?: string[]): boolean {
+export function isDomainMatchingPromotion(
+  hostname: string,
+  targetDomains?: string[],
+  projectDefaultDomain: string = "links.prontofy.com.br"
+): boolean {
   if (!targetDomains || targetDomains.length === 0 || targetDomains.includes("*")) {
     return true;
   }
   const cleanHostname = (hostname || "").replace(/^www\./i, "").toLowerCase();
-  if (cleanHostname === "localhost" || cleanHostname === "127.0.0.1") {
-    return true;
-  }
+
+  // In localhost/dev environment, treat localhost as the project default domain (links.prontofy.com.br)
+  const effectiveHostname =
+    cleanHostname === "localhost" || cleanHostname === "127.0.0.1"
+      ? projectDefaultDomain
+      : cleanHostname;
+
   return targetDomains.some((d) => {
     const cleanTarget = d.replace(/^https?:\/\//i, "").replace(/^www\./i, "").split("/")[0].toLowerCase();
-    return cleanHostname === cleanTarget;
+    return effectiveHostname === cleanTarget;
   });
 }
 
@@ -189,6 +197,36 @@ export function getActivePromotion(currentPathname?: string, hostname?: string):
   }
 }
 
+export async function fetchActivePromotionFromDb(currentPathname?: string, hostname?: string): Promise<Promotion | null> {
+  try {
+    const nowIso = new Date().toISOString();
+    const { data, error } = await supabaseMarketing
+      .from("promotions")
+      .select("*")
+      .lte("start", nowIso)
+      .gte("end", nowIso)
+      .order("end", { ascending: true });
+
+    if (error || !data || data.length === 0) {
+      return null;
+    }
+
+    const matchingPromo = (data as Promotion[]).find((promo) =>
+      isPromoTargetingPage(promo, hostname, currentPathname)
+    );
+
+    if (matchingPromo) {
+      saveActivePromotion(matchingPromo);
+      return matchingPromo;
+    }
+
+    return null;
+  } catch (err) {
+    console.error("Erro ao buscar promoção ativa no Supabase:", err);
+    return null;
+  }
+}
+
 export async function fetchPromotionById(promoId: string): Promise<Promotion | null> {
   try {
     const { data, error } = await supabaseMarketing
@@ -261,7 +299,11 @@ export function calculateTimeLeft(endDateIso: string, startDateIso?: string): Pr
 }
 
 export async function processPromoUrlParam(promoId: string, currentPathname?: string, hostname?: string): Promise<Promotion | null> {
-  if (!promoId) return getActivePromotion(currentPathname, hostname);
+  if (!promoId) {
+    const activeLocal = getActivePromotion(currentPathname, hostname);
+    if (activeLocal) return activeLocal;
+    return fetchActivePromotionFromDb(currentPathname, hostname);
+  }
 
   const promo = await fetchPromotionById(promoId);
   if (promo && isPromotionActive(promo)) {
@@ -271,6 +313,9 @@ export async function processPromoUrlParam(promoId: string, currentPathname?: st
     }
   }
 
-  return getActivePromotion(currentPathname, hostname);
+  const activeLocal = getActivePromotion(currentPathname, hostname);
+  if (activeLocal) return activeLocal;
+  return fetchActivePromotionFromDb(currentPathname, hostname);
 }
+
 
