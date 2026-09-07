@@ -1,6 +1,8 @@
 export interface PromotionFeature extends Record<string, any> {
   is_redirect_enable?: boolean;
   is_redirect_enabled?: boolean;
+  target_domains?: string[];
+  target_paths?: string[];
 }
 
 export interface Promotion {
@@ -16,8 +18,11 @@ export interface Promotion {
 }
 
 export interface PromoTimeLeft {
+  days?: string;
   hours: string;
   minutes: string;
   seconds: string;
   isExpired: boolean;
+  hasDaysBlock?: boolean;
 }
+

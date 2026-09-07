@@ -39,15 +39,55 @@ export function extractPathname(urlOrPath: string): string {
   }
 }
 
-export function isRouteMatchingPromotion(currentPathname: string, promotionUrl: string): boolean {
-  if (!promotionUrl) return true;
+export function isDomainMatchingPromotion(hostname: string, targetDomains?: string[]): boolean {
+  if (!targetDomains || targetDomains.length === 0 || targetDomains.includes("*")) {
+    return true;
+  }
+  const cleanHostname = (hostname || "").replace(/^www\./i, "").toLowerCase();
+  if (cleanHostname === "localhost" || cleanHostname === "127.0.0.1") {
+    return true;
+  }
+  return targetDomains.some((d) => {
+    const cleanTarget = d.replace(/^https?:\/\//i, "").replace(/^www\./i, "").split("/")[0].toLowerCase();
+    return cleanHostname === cleanTarget;
+  });
+}
 
-  const targetPath = extractPathname(promotionUrl);
+export function isRouteMatchingPromotion(currentPathname: string, targetPathsOrUrl?: string | string[]): boolean {
+  if (!targetPathsOrUrl) return true;
+
   const currentPath = extractPathname(currentPathname);
+  const pathsArray = Array.isArray(targetPathsOrUrl) ? targetPathsOrUrl : [targetPathsOrUrl];
 
-  if (targetPath === "" || targetPath === "/") return true;
+  if (pathsArray.length === 0 || pathsArray.includes("*") || pathsArray.includes("/")) return true;
 
-  return currentPath === targetPath || currentPath.startsWith(targetPath + "/");
+  return pathsArray.some((p) => {
+    const targetPath = extractPathname(p);
+    if (targetPath === "" || targetPath === "/") return true;
+    return currentPath === targetPath || currentPath.startsWith(targetPath + "/");
+  });
+}
+
+export function isPromoTargetingPage(promo: Promotion, hostname?: string, currentPathname?: string): boolean {
+  if (!promo) return false;
+
+  const targetDomains = promo.feature?.target_domains;
+  const targetPaths = promo.feature?.target_paths;
+
+  if (hostname && !isDomainMatchingPromotion(hostname, targetDomains)) {
+    return false;
+  }
+
+  if (currentPathname) {
+    if (targetPaths && Array.isArray(targetPaths) && targetPaths.length > 0) {
+      return isRouteMatchingPromotion(currentPathname, targetPaths);
+    }
+    if (promo.promotion_url && !promo.promotion_url.startsWith("http")) {
+      return isRouteMatchingPromotion(currentPathname, promo.promotion_url);
+    }
+  }
+
+  return true;
 }
 
 export function isPromotionActive(promo: Promotion): boolean {
@@ -133,18 +173,13 @@ export function clearActivePromotion(promoId?: string): void {
   }
 }
 
-export function getActivePromotion(currentPathname?: string): Promotion | null {
+export function getActivePromotion(currentPathname?: string, hostname?: string): Promotion | null {
   try {
     const activePromos = getAllActivePromotions();
     if (activePromos.length === 0) return null;
 
-    if (!currentPathname) {
-      return activePromos[0];
-    }
-
-    // Busca a promoção estritamente associada ao pathname atual ou suas subrotas
     const matchingPromo = activePromos.find((promo) =>
-      isRouteMatchingPromotion(currentPathname, promo.promotion_url)
+      isPromoTargetingPage(promo, hostname, currentPathname)
     );
 
     return matchingPromo || null;
@@ -174,14 +209,44 @@ export async function fetchPromotionById(promoId: string): Promise<Promotion | n
   }
 }
 
-export function calculateTimeLeft(endDateIso: string): PromoTimeLeft {
-  const total = new Date(endDateIso).getTime() - Date.now();
+export function calculateTimeLeft(endDateIso: string, startDateIso?: string): PromoTimeLeft {
+  const endMs = new Date(endDateIso).getTime();
+  const now = Date.now();
+  const total = endMs - now;
+
+  const startMs = startDateIso ? new Date(startDateIso).getTime() : 0;
+  const initialDuration = startDateIso ? (endMs - startMs) : 0;
+  const hasDaysBlock = initialDuration >= 86400000;
 
   if (total <= 0) {
-    return { hours: "00", minutes: "00", seconds: "00", isExpired: true };
+    return {
+      days: hasDaysBlock ? "00" : undefined,
+      hours: "00",
+      minutes: "00",
+      seconds: "00",
+      isExpired: true,
+      hasDaysBlock,
+    };
   }
 
   const secondsTotal = Math.floor(total / 1000);
+
+  if (hasDaysBlock) {
+    const days = Math.floor(secondsTotal / 86400);
+    const hours = Math.floor((secondsTotal % 86400) / 3600);
+    const minutes = Math.floor((secondsTotal % 3600) / 60);
+    const seconds = secondsTotal % 60;
+
+    return {
+      days: String(days).padStart(2, "0"),
+      hours: String(hours).padStart(2, "0"),
+      minutes: String(minutes).padStart(2, "0"),
+      seconds: String(seconds).padStart(2, "0"),
+      isExpired: false,
+      hasDaysBlock: true,
+    };
+  }
+
   const hours = Math.floor(secondsTotal / 3600);
   const minutes = Math.floor((secondsTotal % 3600) / 60);
   const seconds = secondsTotal % 60;
@@ -191,19 +256,21 @@ export function calculateTimeLeft(endDateIso: string): PromoTimeLeft {
     minutes: String(minutes).padStart(2, "0"),
     seconds: String(seconds).padStart(2, "0"),
     isExpired: false,
+    hasDaysBlock: false,
   };
 }
 
-export async function processPromoUrlParam(promoId: string, currentPathname?: string): Promise<Promotion | null> {
-  if (!promoId) return getActivePromotion(currentPathname);
+export async function processPromoUrlParam(promoId: string, currentPathname?: string, hostname?: string): Promise<Promotion | null> {
+  if (!promoId) return getActivePromotion(currentPathname, hostname);
 
   const promo = await fetchPromotionById(promoId);
   if (promo && isPromotionActive(promo)) {
     saveActivePromotion(promo);
-    if (!currentPathname || isRouteMatchingPromotion(currentPathname, promo.promotion_url)) {
+    if (isPromoTargetingPage(promo, hostname, currentPathname)) {
       return promo;
     }
   }
 
-  return getActivePromotion(currentPathname);
+  return getActivePromotion(currentPathname, hostname);
 }
+

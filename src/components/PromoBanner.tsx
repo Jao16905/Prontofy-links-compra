@@ -10,14 +10,14 @@ interface PromoBannerProps {
 
 export function PromoBanner({ promo, onDismiss }: PromoBannerProps) {
   const [timeLeft, setTimeLeft] = useState<PromoTimeLeft | null>(() =>
-    promo ? calculateTimeLeft(promo.end) : null
+    promo ? calculateTimeLeft(promo.end, promo.start) : null
   );
 
   useEffect(() => {
     if (!promo) return;
 
     const updateTimer = () => {
-      const remaining = calculateTimeLeft(promo.end);
+      const remaining = calculateTimeLeft(promo.end, promo.start);
       setTimeLeft(remaining);
 
       if (remaining.isExpired) {
@@ -57,6 +57,20 @@ export function PromoBanner({ promo, onDismiss }: PromoBannerProps) {
 
       {/* Relógio Regressivo (Cartões de Calendário) */}
       <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+        {/* Bloco de Dias (Se duração inicial >= 24h) */}
+        {timeLeft.hasDaysBlock && (
+          <>
+            <div className="flex flex-col items-center">
+              <div className="bg-background text-foreground font-mono font-black text-base sm:text-xl px-3 py-1 rounded-md shadow-sm border border-zinc-800 flex items-center justify-center min-w-[44px] sm:min-w-[50px] select-none">
+                {timeLeft.days ?? "00"}
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-widest text-slate-950 mt-0.5">DIAS</span>
+            </div>
+
+            <span className="text-slate-950/70 font-mono font-bold text-base sm:text-lg pb-3 select-none">:</span>
+          </>
+        )}
+
         {/* Bloco de Horas */}
         <div className="flex flex-col items-center">
           <div className="bg-background text-foreground font-mono font-black text-base sm:text-xl px-3 py-1 rounded-md shadow-sm border border-zinc-800 flex items-center justify-center min-w-[44px] sm:min-w-[50px] select-none">
@@ -121,3 +135,4 @@ export function PromoBanner({ promo, onDismiss }: PromoBannerProps) {
     </div>
   );
 }
+
